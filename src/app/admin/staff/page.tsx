@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 
+type Staff = Awaited<ReturnType<typeof prisma.staff.findMany>>[number];
+
 async function createStaff(formData: FormData) {
   "use server";
 
@@ -117,7 +119,7 @@ export default async function AdminStaffPage() {
               No staff added yet.
             </div>
           ) : (
-            staff.map((s) => (
+            staff.map((s: Staff) => (
               <div
                 key={s.id}
                 className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
@@ -151,4 +153,3 @@ export default async function AdminStaffPage() {
     </div>
   );
 }
-
