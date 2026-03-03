@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 
+type Event = Awaited<ReturnType<typeof prisma.event.findMany>>[number];
+
 async function createEvent(formData: FormData) {
   "use server";
 
@@ -117,7 +119,7 @@ export default async function AdminEventsPage() {
               No events yet.
             </div>
           ) : (
-            events.map((e) => (
+            events.map((e: Event) => (
               <div
                 key={e.id}
                 className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
