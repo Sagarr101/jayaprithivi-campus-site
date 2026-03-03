@@ -3,19 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Staff {
-  id           Int      @id @default(autoincrement())
-  name         String
-  role         String
-  department   String?
+  id            Int      @id @default(autoincrement())
+  name          String
+  role          String
+  department    String?
   qualification String?
-  email        String?
-  phone        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  email         String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Notice {
@@ -30,21 +31,18 @@ model Notice {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
-  title     String
-  dateISO   String
-  time      String?
-  location  String?
-  type      String?
+  id          Int      @id @default(autoincrement())
+  title       String
+  dateISO     String
+  time        String?
+  location    String?
+  type        String?
   description String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model AdminUser {
   id       Int    @id @default(autoincrement())
   username String @unique
-  // For now we will not store passwords here; we will protect admin
-  // routes via a shared secret in environment variables.
 }
-
