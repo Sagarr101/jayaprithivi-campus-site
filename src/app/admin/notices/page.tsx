@@ -1,9 +1,10 @@
 import { revalidatePath } from "next/cache";
-
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
+
+type Notice = Awaited<ReturnType<typeof prisma.notice.findMany>>[number];
 
 async function createNotice(formData: FormData) {
   "use server";
@@ -12,18 +13,12 @@ async function createNotice(formData: FormData) {
   const dateISO = String(formData.get("dateISO") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim() || undefined;
   const summary = String(formData.get("summary") ?? "").trim() || undefined;
+  const fileUrl = String(formData.get("fileUrl") ?? "").trim() || undefined;
 
-  if (!title || !dateISO) {
-    return;
-  }
+  if (!title || !dateISO) return;
 
   await prisma.notice.create({
-    data: {
-      title,
-      dateISO,
-      category,
-      summary,
-    },
+    data: { title, dateISO, category, summary, fileUrl },
   });
 
   revalidatePath("/admin/notices");
@@ -38,7 +33,7 @@ export default async function AdminNoticesPage() {
     <div className="space-y-8">
       <PageHeader
         title="Manage notices"
-        description="Create simple text notices that also appear on the public site."
+        description="Create and manage notices."
         className="px-0 pt-0"
       />
 
@@ -65,10 +60,17 @@ export default async function AdminNoticesPage() {
                 required
               />
             </div>
-            <div className="grid gap-2 md:col-span-2">
+            <div className="grid gap-2">
               <label className="text-sm font-medium">Category (optional)</label>
               <input
                 name="category"
+                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">File URL (optional)</label>
+              <input
+                name="fileUrl"
                 className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
               />
             </div>
@@ -96,7 +98,7 @@ export default async function AdminNoticesPage() {
               No notices yet.
             </div>
           ) : (
-            notices.map((n) => (
+            notices.map((n: Notice) => (
               <div
                 key={n.id}
                 className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
@@ -118,4 +120,3 @@ export default async function AdminNoticesPage() {
     </div>
   );
 }
-
