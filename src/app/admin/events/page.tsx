@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import type { Event } from "@prisma/client";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
@@ -35,7 +36,7 @@ async function createEvent(formData: FormData) {
 }
 
 export default async function AdminEventsPage() {
-  const events = await prisma.event.findMany({
+  const events: Event[] = await prisma.event.findMany({
     orderBy: { dateISO: "asc" },
   });
 
@@ -66,7 +67,7 @@ export default async function AdminEventsPage() {
               <input
                 name="dateISO"
                 type="date"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg:white/5"
+                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
                 required
               />
             </div>
@@ -74,21 +75,21 @@ export default async function AdminEventsPage() {
               <label className="text-sm font-medium">Time (optional)</label>
               <input
                 name="time"
-                className="h-10 rounded-xl border border-black/10 bg:white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg:white/5"
+                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
               />
             </div>
             <div className="grid gap-2">
               <label className="text-sm font-medium">Location (optional)</label>
               <input
                 name="location"
-                className="h-10 rounded-xl border border-black/10 bg:white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg:white/5"
+                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
               />
             </div>
             <div className="grid gap-2 md:col-span-2">
               <label className="text-sm font-medium">Type (optional)</label>
               <input
                 name="type"
-                className="h-10 rounded-xl border border-black/10 bg:white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg:white/5"
+                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
               />
             </div>
             <div className="grid gap-2 md:col-span-2">
@@ -97,7 +98,7 @@ export default async function AdminEventsPage() {
               </label>
               <textarea
                 name="description"
-                className="min-h-24 rounded-xl border border-black/10 bg:white/70 p-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg:white/5"
+                className="min-h-24 rounded-xl border border-black/10 bg-white/70 p-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
               />
             </div>
             <div className="md:col-span-2">
@@ -117,10 +118,10 @@ export default async function AdminEventsPage() {
               No events yet.
             </div>
           ) : (
-            events.map((e) => (
+            events.map((e: Event) => (
               <div
                 key={e.id}
-                className="rounded-2xl border border-black/10 bg:white/60 p-4 text-sm dark:border-white/10 dark:bg:white/5"
+                className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
               >
                 <div className="text-xs text-black/60 dark:text-white/60">
                   {e.dateISO} {e.time ? `• ${e.time}` : ""}{" "}
@@ -133,7 +134,7 @@ export default async function AdminEventsPage() {
                   </div>
                 ) : null}
                 {e.description ? (
-                  <div className="mt-1 text-black/70 dark:text:white/70">
+                  <div className="mt-1 text-black/70 dark:text-white/70">
                     {e.description}
                   </div>
                 ) : null}
