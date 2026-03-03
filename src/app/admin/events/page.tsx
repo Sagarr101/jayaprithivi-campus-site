@@ -1,5 +1,4 @@
 import { revalidatePath } from "next/cache";
-import type { Event } from "@prisma/client";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
@@ -36,7 +35,7 @@ async function createEvent(formData: FormData) {
 }
 
 export default async function AdminEventsPage() {
-  const events: Event[] = await prisma.event.findMany({
+  const events = await prisma.event.findMany({
     orderBy: { dateISO: "asc" },
   });
 
@@ -118,7 +117,7 @@ export default async function AdminEventsPage() {
               No events yet.
             </div>
           ) : (
-            events.map((e: Event) => (
+            events.map((e) => (
               <div
                 key={e.id}
                 className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
@@ -146,4 +145,3 @@ export default async function AdminEventsPage() {
     </div>
   );
 }
-
