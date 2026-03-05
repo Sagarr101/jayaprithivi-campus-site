@@ -1,10 +1,51 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { site } from "@/content/site";
 
+const navLinkStyle = `
+  .admin-nav-link {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.375rem 0.625rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    display: inline-block;
+  }
+  
+  .admin-nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+  
+  .admin-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4rem 0.875rem;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 7px;
+    color: rgba(239,100,100,1);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  
+  .admin-logout-btn:hover {
+    background: rgba(239,68,68,0.28);
+  }
+`;
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fb", fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+      <style>{navLinkStyle}</style>
       {/* Admin top bar */}
       <header
         style={{
@@ -66,24 +107,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <Link
               key={href}
               href={href}
-              style={{
-                color: "rgba(255,255,255,0.7)",
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                padding: "0.375rem 0.625rem",
-                borderRadius: "6px",
-                textDecoration: "none",
-                transition: "background 0.15s, color 0.15s",
-                display: "inline-block",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.1)";
-                (e.currentTarget as HTMLAnchorElement).style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-                (e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.7)";
-              }}
+              className="admin-nav-link"
             >
               {label}
             </Link>
@@ -93,27 +117,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
           <a
             href="/api/admin/logout"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.375rem",
-              padding: "0.4rem 0.875rem",
-              background: "rgba(239,68,68,0.15)",
-              border: "1px solid rgba(239,68,68,0.35)",
-              borderRadius: "7px",
-              color: "rgba(239,100,100,1)",
-              fontSize: "0.8125rem",
-              fontWeight: 600,
-              textDecoration: "none",
-              transition: "background 0.15s",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(239,68,68,0.28)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(239,68,68,0.15)";
-            }}
+            className="admin-logout-btn"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
