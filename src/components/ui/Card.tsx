@@ -9,7 +9,8 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-slate-950",
+        // use a slightly darker background and ensure dark text for contrast in light mode
+        "rounded-2xl border border-black/20 bg-gray-100 text-black shadow-sm dark:border-white/10 dark:bg-slate-950 dark:text-white",
         className,
       )}
       {...props}
