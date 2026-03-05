@@ -44,7 +44,7 @@ const navLinkStyle = `
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", background: "#f8f9fb", fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#ffffff", fontFamily: "'Inter','Segoe UI',sans-serif" }}>
       <style>{navLinkStyle}</style>
       {/* Admin top bar */}
       <header

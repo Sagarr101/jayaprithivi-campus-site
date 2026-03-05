@@ -20,7 +20,7 @@ export default function AdminHomePage() {
               <div className="text-2xl mb-2">{s.icon}</div>
               <CardTitle>{s.title}</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm text-black/75 dark:text-white/75">
+            <CardContent className="text-sm text-black/85 dark:text-white/85">
               {s.desc}
             </CardContent>
           </Card>
