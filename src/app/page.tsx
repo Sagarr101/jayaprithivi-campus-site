@@ -14,10 +14,10 @@ import { formatDate } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
-  let latestNotices = [];
-  let upcomingEvents = [];
-  let staffCount = 0;
-  let featuredStaff = [];
+  let latestNotices: any[] = [];
+  let upcomingEvents: any[] = [];
+  let staffCount: number = 0;
+  let featuredStaff: any[] = [];
   let allNotices: any[] = [];
   let allEvents: any[] = [];
 
