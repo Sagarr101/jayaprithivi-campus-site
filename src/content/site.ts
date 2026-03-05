@@ -1,11 +1,11 @@
 export const site = {
-  name: "Jayaprithvi Multiple Campus",
-  fullName: "Jayaprithvi Multiple Campus",
+  name: "Jayaprithivi Campus",
+  fullName: "Jayaprithivi Multiple Campus",
   affiliation: "Far Western University",
   location: "Chainpur, Bajhang, Sudurpashchim Province, Nepal",
-  tagline: "Quality education in bachelor’s and master’s level programs.",
+  tagline: "Empowering Students for a Brighter Future",
   description:
-    "Jayaprithvi Multiple Campus is a constituent campus in Bajhang, Nepal, affiliated with Far Western University. It offers bachelor’s and master’s level academic programs and provides campus information, staff details, admissions guidance, notices, and events.",
+    "Jayaprithivi Multiple Campus is a constituent campus in Bajhang, Nepal, affiliated with Far Western University. It offers undergraduate and postgraduate academic programs and provides campus information, staff details, admissions guidance, notices, and events.",
   contact: {
     address: "Chainpur, Bajhang, Nepal",
     phone: "+977-XXXXXXXXXX",
@@ -16,13 +16,15 @@ export const site = {
   },
   nav: [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/staff", label: "Staff" },
+    { href: "/about", label: "About Us" },
+    { href: "/courses", label: "Courses" },
     { href: "/admissions", label: "Admissions" },
-    { href: "/events", label: "Events" },
+    { href: "/staff", label: "Faculty" },
+    { href: "/campus-life", label: "Campus Life" },
     { href: "/notices", label: "Notices" },
+    { href: "/events", label: "Events" },
     { href: "/gallery", label: "Gallery" },
-    { href: "/contact", label: "Contact" },
+    { href: "/contact", label: "Contact Us" },
   ],
 } as const;
 

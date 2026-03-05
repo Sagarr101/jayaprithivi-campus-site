@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "outline";
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -18,6 +18,8 @@ const variants: Record<Variant, string> = {
     "bg-[color:var(--muted)] text-[color:var(--foreground)] hover:bg-[color:color-mix(in_srgb,var(--muted)_85%,black)] focus-visible:ring-[color:var(--ring)]",
   ghost:
     "bg-transparent text-[color:var(--foreground)] hover:bg-[color:var(--muted)] focus-visible:ring-[color:var(--ring)]",
+  outline:
+    "border border-black/15 bg-transparent text-[color:var(--foreground)] hover:bg-[color:var(--muted)] focus-visible:ring-[color:var(--ring)] dark:border-white/15 dark:hover:bg-white/10",
 };
 
 const sizes: Record<Size, string> = {

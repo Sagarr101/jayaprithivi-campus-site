@@ -1,109 +1,182 @@
-import { revalidatePath } from "next/cache";
+"use client";
 
-import { PageHeader } from "@/components/layout/PageHeader";
+import * as React from "react";
+
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { prisma } from "@/lib/prisma";
 
-type Event = Awaited<ReturnType<typeof prisma.event.findMany>>[number];
+type Event = {
+  id: number;
+  title: string;
+  dateISO: string;
+  time: string | null;
+  location: string | null;
+  type: string | null;
+  description: string | null;
+};
 
-async function createEvent(formData: FormData) {
-  "use server";
+export default function AdminEventsPage() {
+  const [events, setEvents] = React.useState<Event[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [form, setForm] = React.useState({
+    title: "",
+    dateISO: "",
+    time: "",
+    location: "",
+    type: "",
+    description: "",
+  });
+  const [submitting, setSubmitting] = React.useState(false);
+  const [message, setMessage] = React.useState("");
 
-  const title = String(formData.get("title") ?? "").trim();
-  const dateISO = String(formData.get("dateISO") ?? "").trim();
-  const time = String(formData.get("time") ?? "").trim() || undefined;
-  const location = String(formData.get("location") ?? "").trim() || undefined;
-  const type = String(formData.get("type") ?? "").trim() || undefined;
-  const description =
-    String(formData.get("description") ?? "").trim() || undefined;
-
-  if (!title || !dateISO) {
-    return;
+  async function fetchEvents() {
+    const res = await fetch("/api/admin/events");
+    const data = await res.json();
+    setEvents(data);
+    setLoading(false);
   }
 
-  await prisma.event.create({
-    data: {
-      title,
-      dateISO,
-      time,
-      location,
-      type,
-      description,
-    },
-  });
+  React.useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  revalidatePath("/admin/events");
-}
+  function startEdit(event: Event) {
+    setEditingId(event.id);
+    setForm({
+      title: event.title,
+      dateISO: event.dateISO,
+      time: event.time ?? "",
+      location: event.location ?? "",
+      type: event.type ?? "",
+      description: event.description ?? "",
+    });
+    setMessage("");
+  }
 
-export default async function AdminEventsPage() {
-  const events = await prisma.event.findMany({
-    orderBy: { dateISO: "asc" },
-  });
+  function cancelEdit() {
+    setEditingId(null);
+    setForm({ title: "", dateISO: "", time: "", location: "", type: "", description: "" });
+    setMessage("");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage("");
+
+    const method = editingId ? "PUT" : "POST";
+    const body = editingId ? { id: editingId, ...form } : form;
+
+    const res = await fetch("/api/admin/events", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...body,
+        time: body.time || undefined,
+        location: body.location || undefined,
+        type: body.type || undefined,
+        description: body.description || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      setMessage(editingId ? "Event updated successfully!" : "Event added successfully!");
+      setForm({ title: "", dateISO: "", time: "", location: "", type: "", description: "" });
+      setEditingId(null);
+      await fetchEvents();
+    } else {
+      setMessage(data.error ?? "Something went wrong.");
+    }
+    setSubmitting(false);
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Delete this event?")) return;
+    await fetch(`/api/admin/events?id=${id}`, { method: "DELETE" });
+    await fetchEvents();
+  }
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Manage events"
-        description="Create and manage campus events."
-        className="px-0 pt-0"
-      />
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Manage Events</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create event</CardTitle>
+          <CardTitle>{editingId ? "Edit Event" : "Create Event"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createEvent} className="grid gap-4 md:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Title *</label>
+          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title *</label>
               <input
-                name="title"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
                 required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                placeholder="Event title"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Date (YYYY-MM-DD) *</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Date *</label>
               <input
-                name="dateISO"
+                required
                 type="date"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
-                required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.dateISO}
+                onChange={(e) => setForm((f) => ({ ...f, dateISO: e.target.value }))}
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Time (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Time</label>
               <input
-                name="time"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.time}
+                onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
+                placeholder="e.g., 10:00 AM"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Location (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Location</label>
               <input
-                name="location"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.location}
+                onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
+                placeholder="e.g., Main Hall"
               />
             </div>
-            <div className="grid gap-2 md:col-span-2">
-              <label className="text-sm font-medium">Type (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Type</label>
               <input
-                name="type"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.type}
+                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
+                placeholder="e.g., Seminar, Cultural, Sports"
               />
             </div>
-            <div className="grid gap-2 md:col-span-2">
-              <label className="text-sm font-medium">
-                Description (optional)
-              </label>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1">Description</label>
               <textarea
-                name="description"
-                className="min-h-24 rounded-xl border border-black/10 bg-white/70 p-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)] min-h-[80px]"
+                value={form.description}
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                placeholder="Event description..."
               />
             </div>
-            <div className="md:col-span-2">
-              <Button type="submit">Save event</Button>
+            <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (editingId ? "Updating..." : "Saving...") : editingId ? "Update Event" : "Save Event"}
+              </Button>
+              {editingId && (
+                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
+                  Cancel
+                </Button>
+              )}
+              {message && (
+                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
+                  {message}
+                </span>
+              )}
             </div>
           </form>
         </CardContent>
@@ -111,36 +184,49 @@ export default async function AdminEventsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Existing events</CardTitle>
+          <CardTitle>Existing Events ({events.length})</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-3">
-          {events.length === 0 ? (
-            <div className="text-sm text-black/70 dark:text-white/70">
-              No events yet.
-            </div>
+        <CardContent>
+          {loading ? (
+            <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
+          ) : events.length === 0 ? (
+            <div className="text-sm text-black/60 dark:text-white/60">No events yet.</div>
           ) : (
-            events.map((e: Event) => (
-              <div
-                key={e.id}
-                className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
-              >
-                <div className="text-xs text-black/60 dark:text-white/60">
-                  {e.dateISO} {e.time ? `• ${e.time}` : ""}{" "}
-                  {e.type ? `• ${e.type}` : ""}
+            <div className="grid gap-3">
+              {events.map((e) => (
+                <div
+                  key={e.id}
+                  className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
+                >
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">{e.title}</div>
+                    <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                      {e.dateISO}{e.time ? ` · ${e.time}` : ""}{e.type ? ` · ${e.type}` : ""}
+                    </div>
+                    {e.location && (
+                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">📍 {e.location}</div>
+                    )}
+                    {e.description && (
+                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">{e.description}</div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => startEdit(e)}
+                      className="text-xs text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(e.id)}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <div className="mt-1 font-semibold">{e.title}</div>
-                {e.location ? (
-                  <div className="mt-1 text-black/70 dark:text-white/70">
-                    {e.location}
-                  </div>
-                ) : null}
-                {e.description ? (
-                  <div className="mt-1 text-black/70 dark:text-white/70">
-                    {e.description}
-                  </div>
-                ) : null}
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>

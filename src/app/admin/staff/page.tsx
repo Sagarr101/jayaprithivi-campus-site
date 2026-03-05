@@ -1,109 +1,182 @@
-import { revalidatePath } from "next/cache";
+"use client";
 
-import { PageHeader } from "@/components/layout/PageHeader";
+import * as React from "react";
+
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { prisma } from "@/lib/prisma";
 
-type Staff = Awaited<ReturnType<typeof prisma.staff.findMany>>[number];
+type Staff = {
+  id: number;
+  name: string;
+  role: string;
+  department: string | null;
+  qualification: string | null;
+  email: string | null;
+  phone: string | null;
+};
 
-async function createStaff(formData: FormData) {
-  "use server";
+export default function AdminStaffPage() {
+  const [staff, setStaff] = React.useState<Staff[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [form, setForm] = React.useState({
+    name: "",
+    role: "",
+    department: "",
+    qualification: "",
+    email: "",
+    phone: "",
+  });
+  const [submitting, setSubmitting] = React.useState(false);
+  const [message, setMessage] = React.useState("");
 
-  const name = String(formData.get("name") ?? "").trim();
-  const role = String(formData.get("role") ?? "").trim();
-  const department = String(formData.get("department") ?? "").trim() || undefined;
-  const qualification =
-    String(formData.get("qualification") ?? "").trim() || undefined;
-  const email = String(formData.get("email") ?? "").trim() || undefined;
-  const phone = String(formData.get("phone") ?? "").trim() || undefined;
-
-  if (!name || !role) {
-    return;
+  async function fetchStaff() {
+    const res = await fetch("/api/admin/staff");
+    const data = await res.json();
+    setStaff(data);
+    setLoading(false);
   }
 
-  await prisma.staff.create({
-    data: {
-      name,
-      role,
-      department,
-      qualification,
-      email,
-      phone,
-    },
-  });
+  React.useEffect(() => {
+    fetchStaff();
+  }, []);
 
-  revalidatePath("/admin/staff");
-}
+  function startEdit(s: Staff) {
+    setEditingId(s.id);
+    setForm({
+      name: s.name,
+      role: s.role,
+      department: s.department ?? "",
+      qualification: s.qualification ?? "",
+      email: s.email ?? "",
+      phone: s.phone ?? "",
+    });
+    setMessage("");
+  }
 
-export default async function AdminStaffPage() {
-  const staff = await prisma.staff.findMany({
-    orderBy: { name: "asc" },
-  });
+  function cancelEdit() {
+    setEditingId(null);
+    setForm({ name: "", role: "", department: "", qualification: "", email: "", phone: "" });
+    setMessage("");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage("");
+
+    const method = editingId ? "PUT" : "POST";
+    const body = editingId ? { id: editingId, ...form } : form;
+
+    const res = await fetch("/api/admin/staff", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...body,
+        department: body.department || undefined,
+        qualification: body.qualification || undefined,
+        email: body.email || undefined,
+        phone: body.phone || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      setMessage(editingId ? "Staff updated successfully!" : "Staff added successfully!");
+      setForm({ name: "", role: "", department: "", qualification: "", email: "", phone: "" });
+      setEditingId(null);
+      await fetchStaff();
+    } else {
+      setMessage(data.error ?? "Something went wrong.");
+    }
+    setSubmitting(false);
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Delete this staff member?")) return;
+    await fetch(`/api/admin/staff?id=${id}`, { method: "DELETE" });
+    await fetchStaff();
+  }
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Manage staff"
-        description="Add and maintain the campus staff directory."
-        className="px-0 pt-0"
-      />
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Manage Staff</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Add staff member</CardTitle>
+          <CardTitle>{editingId ? "Edit Staff Member" : "Add Staff Member"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createStaff} className="grid gap-4 md:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Name *</label>
+          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name *</label>
               <input
-                name="name"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
                 required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="Full name"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Role *</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Role *</label>
               <input
-                name="role"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
-                placeholder="Campus Chief, Lecturer, Administration, etc."
                 required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.role}
+                onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
+                placeholder="Campus Chief, Lecturer, etc."
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Department (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Department</label>
               <input
-                name="department"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.department}
+                onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
+                placeholder="e.g., Education, Management"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">
-                Qualification (optional)
-              </label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Qualification</label>
               <input
-                name="qualification"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.qualification}
+                onChange={(e) => setForm((f) => ({ ...f, qualification: e.target.value }))}
+                placeholder="e.g., M.Ed., PhD"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Email (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <input
-                name="email"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                placeholder="email@example.com"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Phone (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone</label>
               <input
-                name="phone"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                placeholder="+977-..."
               />
             </div>
-            <div className="md:col-span-2">
-              <Button type="submit">Save staff</Button>
+            <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (editingId ? "Updating..." : "Saving...") : editingId ? "Update Staff" : "Save Staff"}
+              </Button>
+              {editingId && (
+                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
+                  Cancel
+                </Button>
+              )}
+              {message && (
+                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
+                  {message}
+                </span>
+              )}
             </div>
           </form>
         </CardContent>
@@ -111,42 +184,51 @@ export default async function AdminStaffPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Existing staff</CardTitle>
+          <CardTitle>Existing Staff ({staff.length})</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-3">
-          {staff.length === 0 ? (
-            <div className="text-sm text-black/70 dark:text-white/70">
-              No staff added yet.
-            </div>
+        <CardContent>
+          {loading ? (
+            <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
+          ) : staff.length === 0 ? (
+            <div className="text-sm text-black/60 dark:text-white/60">No staff added yet.</div>
           ) : (
-            staff.map((s: Staff) => (
-              <div
-                key={s.id}
-                className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
-              >
-                <div className="font-semibold">{s.name}</div>
-                <div className="mt-1 text-xs text-black/60 dark:text-white/60">
-                  {s.role}
-                  {s.department ? ` • ${s.department}` : ""}
-                </div>
-                {s.qualification ? (
-                  <div className="mt-1 text-xs text-black/60 dark:text-white/60">
-                    {s.qualification}
-                  </div>
-                ) : null}
-                {(s.email || s.phone) && (
-                  <div className="mt-2 text-xs text-black/70 dark:text-white/70">
-                    {s.email && (
-                      <span>
-                        {s.email}
-                        {s.phone ? " • " : ""}
-                      </span>
+            <div className="grid gap-3">
+              {staff.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
+                >
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">{s.name}</div>
+                    <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                      {s.role}{s.department ? ` · ${s.department}` : ""}
+                    </div>
+                    {s.qualification && (
+                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">{s.qualification}</div>
                     )}
-                    {s.phone && <span>{s.phone}</span>}
+                    {(s.email || s.phone) && (
+                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">
+                        {s.email}{s.email && s.phone ? " · " : ""}{s.phone}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => startEdit(s)}
+                      className="text-xs text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(s.id)}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>

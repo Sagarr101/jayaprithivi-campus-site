@@ -1,32 +1,30 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { messageSchema } from "@/lib/validation";
+import { errorResponse, successResponse } from "@/lib/apiResponse";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => null)) as
-    | {
-        name?: string;
-        email?: string;
-        phone?: string;
-        message?: string;
-      }
-    | null;
+  try {
+    const body = await req.json();
+    const validation = messageSchema.safeParse(body);
 
-  if (!body?.name || !body?.message) {
-    return NextResponse.json(
-      { ok: false, error: "Name and message are required." },
-      { status: 400 },
-    );
+    if (!validation.success) {
+      logger.warn("Contact form validation failed", validation.error.flatten());
+      return errorResponse(
+        `Validation failed: ${validation.error.issues[0]?.message}`,
+        400
+      );
+    }
+
+    const created = await prisma.message.create({
+      data: validation.data,
+    });
+
+    logger.info("Contact message received", { messageId: created.id, sender: validation.data.name });
+    return successResponse({ ok: true, messageId: created.id }, 201);
+  } catch (error) {
+    logger.error("Failed to create contact message", error);
+    return errorResponse("Failed to save message", 500);
   }
-
-  // For now we just accept the message.
-  // When you deploy, you can forward this to email (SMTP/Resend) or a database.
-  console.log("Contact form submission:", {
-    name: body.name,
-    email: body.email,
-    phone: body.phone,
-    message: body.message,
-    at: new Date().toISOString(),
-  });
-
-  return NextResponse.json({ ok: true });
 }
-

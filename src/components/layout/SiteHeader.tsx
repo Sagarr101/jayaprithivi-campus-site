@@ -24,11 +24,13 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-black/10 bg-white/85 backdrop-blur dark:border-white/10 dark:bg-black/60">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="grid size-10 place-items-center rounded-2xl bg-[color:var(--primary)] text-white">
-            <span className="text-sm font-semibold">CC</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt={`${site.name} Logo`}
+            className="size-10 rounded-lg object-contain"
+          />
           <div className="leading-tight">
-            <div className="text-sm font-semibold">{site.name}</div>
+            <div className="text-sm font-bold text-[color:var(--primary)] dark:text-white">{site.name}</div>
             <div className="text-xs text-black/60 dark:text-white/60">
               Affiliated to {site.affiliation}
             </div>
@@ -43,7 +45,7 @@ export function SiteHeader() {
               className={cn(
                 "rounded-full px-4 py-2 text-sm font-medium text-black/70 hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white",
                 isActive(pathname, item.href) &&
-                  "bg-black/5 text-black dark:bg-white/10 dark:text-white",
+                "bg-black/5 text-black dark:bg-white/10 dark:text-white",
               )}
             >
               {item.label}
@@ -75,7 +77,7 @@ export function SiteHeader() {
                 className={cn(
                   "rounded-xl px-4 py-3 text-sm font-medium text-black/80 hover:bg-black/5 dark:text-white/80 dark:hover:bg-white/10",
                   isActive(pathname, item.href) &&
-                    "bg-black/5 dark:bg-white/10",
+                  "bg-black/5 dark:bg-white/10",
                 )}
               >
                 {item.label}

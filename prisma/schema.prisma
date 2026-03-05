@@ -17,6 +17,10 @@ model Staff {
   phone         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([role])
+  @@index([department])
+  @@index([createdAt])
 }
 
 model Notice {
@@ -28,6 +32,10 @@ model Notice {
   fileUrl   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([dateISO])
+  @@index([createdAt])
 }
 
 model Event {
@@ -40,9 +48,40 @@ model Event {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([dateISO])
+  @@index([createdAt])
 }
 
 model AdminUser {
   id       Int    @id @default(autoincrement())
   username String @unique
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String // e.g., 'Undergraduate' or 'Postgraduate'
+  duration    String
+  description String?
+  department  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([department])
+  @@index([createdAt])
 }

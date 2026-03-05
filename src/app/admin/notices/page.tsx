@@ -1,88 +1,169 @@
-import { revalidatePath } from "next/cache";
-import { PageHeader } from "@/components/layout/PageHeader";
+"use client";
+
+import * as React from "react";
+
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { prisma } from "@/lib/prisma";
 
-type Notice = Awaited<ReturnType<typeof prisma.notice.findMany>>[number];
+type Notice = {
+  id: number;
+  title: string;
+  dateISO: string;
+  category: string | null;
+  summary: string | null;
+  fileUrl: string | null;
+};
 
-async function createNotice(formData: FormData) {
-  "use server";
-
-  const title = String(formData.get("title") ?? "").trim();
-  const dateISO = String(formData.get("dateISO") ?? "").trim();
-  const category = String(formData.get("category") ?? "").trim() || undefined;
-  const summary = String(formData.get("summary") ?? "").trim() || undefined;
-  const fileUrl = String(formData.get("fileUrl") ?? "").trim() || undefined;
-
-  if (!title || !dateISO) return;
-
-  await prisma.notice.create({
-    data: { title, dateISO, category, summary, fileUrl },
+export default function AdminNoticesPage() {
+  const [notices, setNotices] = React.useState<Notice[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [form, setForm] = React.useState({
+    title: "",
+    dateISO: "",
+    category: "",
+    summary: "",
+    fileUrl: "",
   });
+  const [submitting, setSubmitting] = React.useState(false);
+  const [message, setMessage] = React.useState("");
 
-  revalidatePath("/admin/notices");
-}
+  async function fetchNotices() {
+    const res = await fetch("/api/admin/notices");
+    const data = await res.json();
+    setNotices(data);
+    setLoading(false);
+  }
 
-export default async function AdminNoticesPage() {
-  const notices = await prisma.notice.findMany({
-    orderBy: { dateISO: "desc" },
-  });
+  React.useEffect(() => {
+    fetchNotices();
+  }, []);
+
+  function startEdit(notice: Notice) {
+    setEditingId(notice.id);
+    setForm({
+      title: notice.title,
+      dateISO: notice.dateISO,
+      category: notice.category ?? "",
+      summary: notice.summary ?? "",
+      fileUrl: notice.fileUrl ?? "",
+    });
+    setMessage("");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm({ title: "", dateISO: "", category: "", summary: "", fileUrl: "" });
+    setMessage("");
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage("");
+
+    const method = editingId ? "PUT" : "POST";
+    const body = editingId ? { id: editingId, ...form } : form;
+
+    const res = await fetch("/api/admin/notices", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...body,
+        category: body.category || undefined,
+        summary: body.summary || undefined,
+        fileUrl: body.fileUrl || undefined,
+      }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      setMessage(editingId ? "Notice updated successfully!" : "Notice added successfully!");
+      setForm({ title: "", dateISO: "", category: "", summary: "", fileUrl: "" });
+      setEditingId(null);
+      await fetchNotices();
+    } else {
+      setMessage(data.error ?? "Something went wrong.");
+    }
+    setSubmitting(false);
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Delete this notice?")) return;
+    await fetch(`/api/admin/notices?id=${id}`, { method: "DELETE" });
+    await fetchNotices();
+  }
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Manage notices"
-        description="Create and manage notices."
-        className="px-0 pt-0"
-      />
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Manage Notices</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Create notice</CardTitle>
+          <CardTitle>{editingId ? "Edit Notice" : "Create Notice"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={createNotice} className="grid gap-4 md:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Title *</label>
+          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title *</label>
               <input
-                name="title"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
                 required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                placeholder="Notice title"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Date (YYYY-MM-DD) *</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Date *</label>
               <input
-                name="dateISO"
+                required
                 type="date"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
-                required
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.dateISO}
+                onChange={(e) => setForm((f) => ({ ...f, dateISO: e.target.value }))}
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">Category (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
               <input
-                name="category"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                placeholder="e.g., Exam, Holiday, Admission"
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium">File URL (optional)</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">File URL</label>
               <input
-                name="fileUrl"
-                className="h-10 rounded-xl border border-black/10 bg-white/70 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+                value={form.fileUrl}
+                onChange={(e) => setForm((f) => ({ ...f, fileUrl: e.target.value }))}
+                placeholder="https://..."
               />
             </div>
-            <div className="grid gap-2 md:col-span-2">
-              <label className="text-sm font-medium">Summary (optional)</label>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1">Summary</label>
               <textarea
-                name="summary"
-                className="min-h-24 rounded-xl border border-black/10 bg-white/70 p-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[color:var(--ring)] dark:border-white/10 dark:bg-white/5"
+                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)] min-h-[80px]"
+                value={form.summary}
+                onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
+                placeholder="Brief description..."
               />
             </div>
-            <div className="md:col-span-2">
-              <Button type="submit">Save notice</Button>
+            <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (editingId ? "Updating..." : "Saving...") : editingId ? "Update Notice" : "Save Notice"}
+              </Button>
+              {editingId && (
+                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
+                  Cancel
+                </Button>
+              )}
+              {message && (
+                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
+                  {message}
+                </span>
+              )}
             </div>
           </form>
         </CardContent>
@@ -90,30 +171,46 @@ export default async function AdminNoticesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Existing notices</CardTitle>
+          <CardTitle>Existing Notices ({notices.length})</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-3">
-          {notices.length === 0 ? (
-            <div className="text-sm text-black/70 dark:text-white/70">
-              No notices yet.
-            </div>
+        <CardContent>
+          {loading ? (
+            <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
+          ) : notices.length === 0 ? (
+            <div className="text-sm text-black/60 dark:text-white/60">No notices yet.</div>
           ) : (
-            notices.map((n: Notice) => (
-              <div
-                key={n.id}
-                className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/5"
-              >
-                <div className="text-xs text-black/60 dark:text-white/60">
-                  {n.dateISO} {n.category ? `• ${n.category}` : ""}
-                </div>
-                <div className="mt-1 font-semibold">{n.title}</div>
-                {n.summary ? (
-                  <div className="mt-1 text-black/70 dark:text-white/70">
-                    {n.summary}
+            <div className="grid gap-3">
+              {notices.map((n) => (
+                <div
+                  key={n.id}
+                  className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
+                >
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">{n.title}</div>
+                    <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                      {n.dateISO}{n.category ? ` · ${n.category}` : ""}
+                    </div>
+                    {n.summary && (
+                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">{n.summary}</div>
+                    )}
                   </div>
-                ) : null}
-              </div>
-            ))
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => startEdit(n)}
+                      className="text-xs text-blue-500 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(n.id)}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
