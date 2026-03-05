@@ -33,7 +33,7 @@ export default function AdminStaffPage() {
   async function fetchStaff() {
     const res = await fetch("/api/admin/staff");
     const data = await res.json();
-    setStaff(data);
+    setStaff(data.data?.staff || []);
     setLoading(false);
   }
 

@@ -31,7 +31,7 @@ export default function AdminNoticesPage() {
   async function fetchNotices() {
     const res = await fetch("/api/admin/notices");
     const data = await res.json();
-    setNotices(data);
+    setNotices(data.data?.notices || []);
     setLoading(false);
   }
 

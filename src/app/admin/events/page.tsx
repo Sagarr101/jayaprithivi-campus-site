@@ -33,7 +33,7 @@ export default function AdminEventsPage() {
   async function fetchEvents() {
     const res = await fetch("/api/admin/events");
     const data = await res.json();
-    setEvents(data);
+    setEvents(data.data?.events || []);
     setLoading(false);
   }
 
