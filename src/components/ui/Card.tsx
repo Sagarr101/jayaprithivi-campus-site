@@ -9,8 +9,8 @@ export function Card({
   return (
     <div
       className={cn(
-        // use a slightly darker background and ensure dark text for contrast in light mode
-        "rounded-2xl border border-black/20 bg-gray-100 text-black shadow-sm dark:border-white/10 dark:bg-slate-950 dark:text-white",
+        // classy dark card with teal/cyan accent on hover
+        "rounded-2xl border border-slate-700 bg-slate-800 text-white shadow-lg transition-all duration-300 hover:border-teal-500 hover:shadow-teal-500/20 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:border-teal-400",
         className,
       )}
       {...props}

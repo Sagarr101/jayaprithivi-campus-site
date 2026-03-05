@@ -14,18 +14,30 @@ import { formatDate } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
-  const allNotices = await prisma.notice.findMany();
-  const latestNotices = allNotices
-    .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
-    .slice(0, 3);
+  let latestNotices = [];
+  let upcomingEvents = [];
+  let staffCount = 0;
+  let featuredStaff = [];
+  let allNotices: any[] = [];
+  let allEvents: any[] = [];
 
-  const allEvents = await prisma.event.findMany();
-  const upcomingEvents = allEvents
-    .sort((a, b) => a.dateISO.localeCompare(b.dateISO))
-    .slice(0, 3);
+  try {
+    allNotices = await prisma.notice.findMany();
+    latestNotices = allNotices
+      .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
+      .slice(0, 3);
 
-  const staffCount = await prisma.staff.count();
-  const featuredStaff = await prisma.staff.findMany({ take: 4 });
+    allEvents = await prisma.event.findMany();
+    upcomingEvents = allEvents
+      .sort((a, b) => a.dateISO.localeCompare(b.dateISO))
+      .slice(0, 3);
+
+    staffCount = await prisma.staff.count();
+    featuredStaff = await prisma.staff.findMany({ take: 4 });
+  } catch (error) {
+    // Database connection failed - show empty state
+    console.error("Database connection error:", error);
+  }
 
   return (
     <div>
