@@ -12,9 +12,9 @@ export default function ContactPage() {
   return (
     <div>
       {/* Page Hero */}
-      <div className="bg-[color:var(--primary)] text-white py-20 px-4">
+      <div className="bg-indigo-900 text-white py-20 px-4">
         <div className="mx-auto max-w-6xl">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--accent)]/20 text-[color:var(--accent)] mb-4">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600 text-white mb-4">
             Get in Touch
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
@@ -26,22 +26,22 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
+      <section className="mx-auto max-w-6xl px-4 py-16 bg-gray-50">
         <div className="grid gap-10 md:grid-cols-3">
           {/* Contact Form */}
           <div className="md:col-span-2">
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-4">
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-4">
               Send a Message
             </div>
-            <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
             <ContactForm />
           </div>
 
           {/* Contact Info & Map */}
           <div className="space-y-5">
             {/* Info Card */}
-            <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm">
-              <div className="text-xs font-semibold text-[color:var(--accent)] uppercase tracking-widest mb-5">Campus Office</div>
+            <div className="bg-white shadow-lg rounded-xl p-6 shadow-sm">
+              <div className="text-xs font-semibold text-violet-600 uppercase tracking-widest mb-5">Campus Office</div>
               <div className="space-y-4">
                 {[
                   { label: "Address", value: site.contact.address, icon: "📍" },
@@ -51,16 +51,16 @@ export default function ContactPage() {
                   <div key={item.label} className="flex items-start gap-3">
                     <span className="text-lg mt-0.5">{item.icon}</span>
                     <div>
-                      <div className="text-xs text-black/50 dark:text-white/50 uppercase tracking-wide">{item.label}</div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide">{item.label}</div>
                       {item.href ? (
                         <a
                           href={item.href}
-                          className="text-sm text-[color:var(--primary)] dark:text-[color:var(--accent)] hover:underline underline-offset-4 font-medium"
+                          className="text-sm text-indigo-900 hover:text-violet-600 underline underline-offset-4 font-medium"
                         >
                           {item.value}
                         </a>
                       ) : (
-                        <div className="text-sm text-black/75 dark:text-white/75">{item.value}</div>
+                        <div className="text-sm text-gray-700">{item.value}</div>
                       )}
                     </div>
                   </div>
@@ -69,9 +69,9 @@ export default function ContactPage() {
             </div>
 
             {/* Office Hours */}
-            <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm">
-              <div className="text-xs font-semibold text-[color:var(--accent)] uppercase tracking-widest mb-4">Office Hours</div>
-              <div className="space-y-2 text-sm text-black/75 dark:text-white/75">
+            <div className="bg-white shadow-lg rounded-xl p-6 shadow-sm">
+              <div className="text-xs font-semibold text-violet-600 uppercase tracking-widest mb-4">Office Hours</div>
+              <div className="space-y-2 text-sm text-gray-700">
                 <div className="flex justify-between">
                   <span>Sun – Fri</span>
                   <span className="font-medium">9:00 AM – 5:00 PM</span>
@@ -95,7 +95,7 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
-              <div className="p-3 text-xs text-black/60 dark:text-white/60 text-center">
+              <div className="p-3 text-xs text-gray-500 text-center">
                 Chainpur, Bajhang, Sudurpashchim Province, Nepal
               </div>
             </div>

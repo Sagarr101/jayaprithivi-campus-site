@@ -30,9 +30,9 @@ export default function AdmissionsPage() {
   return (
     <div>
       {/* Page Hero */}
-      <div className="bg-[color:var(--primary)] text-white py-20 px-4">
+      <div className="bg-indigo-900 text-white py-20 px-4">
         <div className="mx-auto max-w-6xl">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--accent)]/20 text-[color:var(--accent)] mb-4">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600 text-white mb-4">
             Admissions 2026
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
@@ -43,32 +43,31 @@ export default function AdmissionsPage() {
           </p>
           <Button
             href="#enquiry-form"
-            className="mt-8 bg-[color:var(--accent)] text-[color:var(--primary)] hover:bg-[color:var(--accent)]/90 font-bold border-none"
+            className="mt-8 bg-violet-600 text-white hover:bg-violet-700 font-bold border-none"
           >
             Enquire Now ↓
           </Button>
         </div>
       </div>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
+      <section className="mx-auto max-w-6xl px-4 py-16 bg-gray-50">
         {/* Application Steps */}
         <div className="mb-16">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
             Process
           </div>
-          <h2 className="text-3xl font-bold tracking-tight mb-8">How to Apply</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-8">How to Apply</h2>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {steps.map((s, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm group hover:border-[color:var(--accent)] hover:-translate-y-1 transition-all"
+                className="bg-white shadow-lg rounded-xl p-6 group hover:-translate-y-1 transition-all"
               >
                 <div className="flex items-start gap-4 mb-3">
-                  <div className="text-3xl">{s.icon}</div>
-                  <div className="font-bold text-[color:var(--accent)] text-xs">{s.step}</div>
+                  <div className="font-bold text-violet-600 text-xs">{s.step}</div>
                 </div>
-                <div className="font-bold text-[color:var(--primary)] dark:text-white mb-1">{s.title}</div>
-                <div className="text-sm text-black/65 dark:text-white/65 leading-6">{s.desc}</div>
+                <div className="font-bold text-indigo-900 mb-1">{s.title}</div>
+                <div className="text-sm text-gray-700 leading-6">{s.desc}</div>
               </div>
             ))}
           </div>
@@ -77,22 +76,22 @@ export default function AdmissionsPage() {
         {/* Admissions Countdown */}
         <div className="mb-16 text-center">
           <h2 className="text-2xl font-bold mb-4">Admissions Open Until July 1, 2026</h2>
-          <div className="inline-flex items-center gap-4 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="inline-flex items-center gap-4 bg-white shadow-lg rounded-xl p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600" id="days">0</div>
-              <div className="text-sm text-gray-600">Days</div>
+              <div className="text-3xl font-bold text-gray-900" id="days">0</div>
+              <div className="text-sm text-gray-500">Days</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600" id="hours">0</div>
-              <div className="text-sm text-gray-600">Hours</div>
+              <div className="text-3xl font-bold text-gray-900" id="hours">0</div>
+              <div className="text-sm text-gray-500">Hours</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600" id="minutes">0</div>
-              <div className="text-sm text-gray-600">Minutes</div>
+              <div className="text-3xl font-bold text-gray-900" id="minutes">0</div>
+              <div className="text-sm text-gray-500">Minutes</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-600" id="seconds">0</div>
-              <div className="text-sm text-gray-600">Seconds</div>
+              <div className="text-3xl font-bold text-gray-900" id="seconds">0</div>
+              <div className="text-sm text-gray-500">Seconds</div>
             </div>
           </div>
         </div>
@@ -100,18 +99,18 @@ export default function AdmissionsPage() {
         {/* Required Documents */}
         <div className="grid gap-8 md:grid-cols-2 mb-16">
           <div>
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
               Documents
             </div>
-            <h2 className="text-3xl font-bold tracking-tight mb-6">Required Documents</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">Required Documents</h2>
             <div className="space-y-3">
               {requiredDocs.map((doc, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-4"
+                  className="flex items-start gap-3 bg-white shadow-lg rounded-xl p-4"
                 >
-                  <span className="text-[color:var(--accent)] font-bold text-lg mt-0.5">✓</span>
-                  <span className="text-sm text-black/75 dark:text-white/75">{doc}</span>
+                  <span className="text-violet-600 font-bold text-lg mt-0.5">✓</span>
+                  <span className="text-sm text-gray-700">{doc}</span>
                 </div>
               ))}
             </div>
@@ -119,24 +118,24 @@ export default function AdmissionsPage() {
 
           <div className="space-y-4">
             {/* Fee info */}
-            <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm">
-              <div className="text-xs font-semibold text-[color:var(--accent)] uppercase tracking-widest mb-3">Fees</div>
-              <p className="text-sm text-black/65 dark:text-white/65 leading-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 shadow-sm">
+              <div className="text-xs font-semibold text-violet-600 uppercase tracking-widest mb-3">Fees</div>
+              <p className="text-sm text-gray-700 leading-6">
                 Tuition fees vary by program. Please visit the admissions office or contact us for the latest fee structure for the 2026 batch.
               </p>
             </div>
 
             {/* Contact Info */}
-            <div className="rounded-2xl bg-[color:var(--primary)] text-white p-8">
-              <div className="text-xs font-semibold text-[color:var(--accent)] uppercase tracking-widest mb-4">Contact Admissions</div>
-              <div className="space-y-3 text-white/80 text-sm">
+            <div className="bg-indigo-900 text-white p-8">
+              <div className="text-xs font-semibold text-violet-600 uppercase tracking-widest mb-4">Contact Admissions</div>
+              <div className="space-y-3 text-white text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-[color:var(--accent)] font-semibold">Phone:</span>
+                  <span className="text-violet-600 font-semibold">Phone:</span>
                   <span>{site.contact.phone}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[color:var(--accent)] font-semibold">Email:</span>
-                  <a href={`mailto:${site.contact.email}`} className="hover:text-white underline underline-offset-4">
+                  <span className="text-violet-600 font-semibold">Email:</span>
+                  <a href={`mailto:${site.contact.email}`} className="hover:text-violet-600 underline underline-offset-4">
                     {site.contact.email}
                   </a>
                 </div>
@@ -147,10 +146,10 @@ export default function AdmissionsPage() {
 
         {/* Enquiry Form */}
         <div id="enquiry-form" className="scroll-mt-24">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
             Have Questions?
           </div>
-          <h2 className="text-3xl font-bold tracking-tight mb-8">Admission Enquiry</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-8">Admission Enquiry</h2>
           <EnquiryForm />
         </div>
       </section>

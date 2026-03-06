@@ -37,9 +37,9 @@ export default function GalleryPage() {
   return (
     <div>
       {/* Page Hero */}
-      <div className="bg-[color:var(--primary)] text-white py-20 px-4">
+      <div className="bg-indigo-900 text-white py-20 px-4">
         <div className="mx-auto max-w-6xl">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--accent)]/20 text-[color:var(--accent)] mb-4">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600 text-white mb-4">
             Campus Life
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
@@ -51,7 +51,7 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
+      <section className="mx-auto max-w-6xl px-4 py-16 bg-gray-50">
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2 mb-8">
           {categories.map((cat) => (
@@ -59,8 +59,8 @@ export default function GalleryPage() {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat
-                  ? "bg-[color:var(--primary)] text-white shadow"
-                  : "bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/20"
+                  ? "bg-violet-600 text-white shadow"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
             >
               {cat}
@@ -74,7 +74,7 @@ export default function GalleryPage() {
             <button
               key={item.id}
               onClick={() => setLightbox({ src: item.imageUrl, title: item.title, description: item.description })}
-              className="group relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
+              className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-600"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -85,7 +85,7 @@ export default function GalleryPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
                 <div className="text-sm font-semibold">{item.title}</div>
-                <div className="text-xs text-[color:var(--accent)]">{item.category}</div>
+                <div className="text-xs text-violet-600">{item.category}</div>
               </div>
               <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="bg-white/20 backdrop-blur rounded-full px-2 py-1 text-white text-xs">
@@ -108,7 +108,7 @@ export default function GalleryPage() {
             <img
               src={lightbox.src}
               alt={lightbox.title}
-              className="w-full rounded-2xl shadow-2xl max-h-[80vh] object-contain"
+              className="w-full rounded-xl shadow-2xl max-h-[80vh] object-contain"
             />
             <div className="mt-4 flex items-center justify-between">
               <div className="text-white">

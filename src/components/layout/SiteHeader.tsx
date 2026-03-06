@@ -21,7 +21,7 @@ export function SiteHeader() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/10 bg-white/85 backdrop-blur dark:border-white/10 dark:bg-black/60">
+    <header className="sticky top-0 z-50 bg-indigo-900 text-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link href="/" className="flex items-center gap-3">
           <img
@@ -30,8 +30,8 @@ export function SiteHeader() {
             className="size-10 rounded-lg object-contain"
           />
           <div className="leading-tight">
-            <div className="text-sm font-bold text-[color:var(--primary)] dark:text-white">{site.name}</div>
-            <div className="text-xs text-black/60 dark:text-white/60">
+            <div className="text-sm font-bold text-white">{site.name}</div>
+            <div className="text-xs text-white/60">
               Affiliated to {site.affiliation}
             </div>
           </div>
@@ -43,9 +43,9 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                "rounded-full px-4 py-2 text-sm font-medium text-black/70 hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white",
+                "rounded-full px-4 py-2 text-sm font-medium text-white/70 hover:bg-violet-600 hover:text-white",
                 isActive(pathname, item.href) &&
-                "bg-black/5 text-black dark:bg-white/10 dark:text-white",
+                "bg-violet-600 text-white",
               )}
             >
               {item.label}
@@ -55,7 +55,7 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/10 dark:bg-black dark:hover:bg-white/10 md:hidden"
+          className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-indigo-900 px-3 py-2 text-sm font-medium text-white hover:bg-violet-600 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -67,7 +67,7 @@ export function SiteHeader() {
       {open ? (
         <div
           id="mobile-nav"
-          className="border-t border-black/10 bg-white px-4 py-4 dark:border-white/10 dark:bg-black md:hidden"
+          className="bg-indigo-900 px-4 py-4 md:hidden"
         >
           <div className="mx-auto grid max-w-6xl gap-2">
             {site.nav.map((item) => (
@@ -75,9 +75,9 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-xl px-4 py-3 text-sm font-medium text-black/80 hover:bg-black/5 dark:text-white/80 dark:hover:bg-white/10",
+                  "rounded-xl px-4 py-3 text-sm font-medium text-white/80 hover:bg-violet-600 hover:text-white",
                   isActive(pathname, item.href) &&
-                  "bg-black/5 dark:bg-white/10",
+                  "bg-violet-600 text-white",
                 )}
               >
                 {item.label}
