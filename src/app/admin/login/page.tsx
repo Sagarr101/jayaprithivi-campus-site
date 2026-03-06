@@ -6,6 +6,7 @@ import { site } from "@/content/site";
 
 export default function AdminLoginPage() {
     const router = useRouter();
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -19,15 +20,15 @@ export default function AdminLoginPage() {
             const res = await fetch("/api/admin/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password }),
+                body: JSON.stringify({ email, password }),
             });
 
             if (res.ok) {
-                router.push("/admin");
+                router.push("/admin/dashboard");
                 router.refresh();
             } else {
                 const data = (await res.json()) as { error?: string };
-                setError(data.error ?? "Incorrect password. Please try again.");
+                setError(data.error ?? "Invalid credentials. Please try again.");
             }
         } catch {
             setError("Something went wrong. Please try again.");
@@ -149,6 +150,57 @@ export default function AdminLoginPage() {
                 <form onSubmit={(e) => void handleSubmit(e)}>
                     <div style={{ marginBottom: "1.25rem" }}>
                         <label
+                            htmlFor="admin-email"
+                            style={{
+                                display: "block",
+                                fontSize: "0.8125rem",
+                                fontWeight: 500,
+                                color: "rgba(255,255,255,0.65)",
+                                marginBottom: "0.5rem",
+                                letterSpacing: "0.04em",
+                                textTransform: "uppercase",
+                            }}
+                        >
+                            Email
+                        </label>
+                        <input
+                            id="admin-email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter admin email"
+                            required
+                            autoFocus
+                            style={{
+                                width: "100%",
+                                padding: "0.75rem 1rem",
+                                background: "rgba(255,255,255,0.07)",
+                                border: error
+                                    ? "1px solid rgba(239,68,68,0.7)"
+                                    : "1px solid rgba(255,255,255,0.12)",
+                                borderRadius: "10px",
+                                color: "#ffffff",
+                                fontSize: "0.9375rem",
+                                outline: "none",
+                                transition: "border-color 0.2s, box-shadow 0.2s",
+                                boxSizing: "border-box",
+                            }}
+                            onFocus={(e) => {
+                                if (!error) {
+                                    e.currentTarget.style.borderColor = "rgba(212,175,55,0.6)";
+                                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(212,175,55,0.1)";
+                                }
+                            }}
+                            onBlur={(e) => {
+                                if (!error) {
+                                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
+                                    e.currentTarget.style.boxShadow = "none";
+                                }
+                            }}
+                        />
+                    </div>
+                    <div style={{ marginBottom: "1.25rem" }}>
+                        <label
                             htmlFor="admin-password"
                             style={{
                                 display: "block",
@@ -169,7 +221,6 @@ export default function AdminLoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter admin password"
                             required
-                            autoFocus
                             style={{
                                 width: "100%",
                                 padding: "0.75rem 1rem",

@@ -74,6 +74,29 @@ export default function AdmissionsPage() {
           </div>
         </div>
 
+        {/* Admissions Countdown */}
+        <div className="mb-16 text-center">
+          <h2 className="text-2xl font-bold mb-4">Admissions Open Until July 1, 2026</h2>
+          <div className="inline-flex items-center gap-4 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600" id="days">0</div>
+              <div className="text-sm text-gray-600">Days</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600" id="hours">0</div>
+              <div className="text-sm text-gray-600">Hours</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600" id="minutes">0</div>
+              <div className="text-sm text-gray-600">Minutes</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-600" id="seconds">0</div>
+              <div className="text-sm text-gray-600">Seconds</div>
+            </div>
+          </div>
+        </div>
+
         {/* Required Documents */}
         <div className="grid gap-8 md:grid-cols-2 mb-16">
           <div>

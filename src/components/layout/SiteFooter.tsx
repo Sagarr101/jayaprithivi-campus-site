@@ -47,12 +47,12 @@ export function SiteFooter() {
             </li>
             <li className="flex items-start gap-2">
               <span className="font-medium text-white">Phone:</span>{" "}
-              <span>{site.contact.phone}</span>
+              <span>+977-92-420123</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="font-medium text-white">Email:</span>{" "}
-              <a className="hover:underline underline-offset-4" href={`mailto:${site.contact.email}`}>
-                {site.contact.email}
+              <a className="hover:underline underline-offset-4" href="mailto:info@jayaprithivicampus.edu.np">
+                info@jayaprithivicampus.edu.np
               </a>
             </li>
           </ul>

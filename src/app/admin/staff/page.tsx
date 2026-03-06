@@ -1,237 +1,159 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-
-type Staff = {
+interface Staff {
   id: number;
   name: string;
-  role: string;
-  department: string | null;
-  qualification: string | null;
-  email: string | null;
-  phone: string | null;
-};
+  position: string;
+  department: string;
+  email?: string;
+  photoUrl?: string;
+  bio?: string;
+}
 
-export default function AdminStaffPage() {
-  const [staff, setStaff] = React.useState<Staff[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [editingId, setEditingId] = React.useState<number | null>(null);
-  const [form, setForm] = React.useState({
-    name: "",
-    role: "",
-    department: "",
-    qualification: "",
-    email: "",
-    phone: "",
-  });
-  const [submitting, setSubmitting] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+export default function AdminStaff() {
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [form, setForm] = useState({ name: '', position: '', department: '', email: '', photoUrl: '', bio: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  async function fetchStaff() {
-    const res = await fetch("/api/admin/staff");
-    const data = await res.json();
-    setStaff(data.data?.staff || []);
-    setLoading(false);
-  }
-
-  React.useEffect(() => {
+  useEffect(() => {
     fetchStaff();
   }, []);
 
-  function startEdit(s: Staff) {
-    setEditingId(s.id);
-    setForm({
-      name: s.name,
-      role: s.role,
-      department: s.department ?? "",
-      qualification: s.qualification ?? "",
-      email: s.email ?? "",
-      phone: s.phone ?? "",
-    });
-    setMessage("");
-  }
+  const fetchStaff = () => {
+    fetch('/api/staff')
+      .then(r => r.json())
+      .then(setStaff);
+  };
 
-  function cancelEdit() {
-    setEditingId(null);
-    setForm({ name: "", role: "", department: "", qualification: "", email: "", phone: "" });
-    setMessage("");
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setMessage("");
-
-    const method = editingId ? "PUT" : "POST";
-    const body = editingId ? { id: editingId, ...form } : form;
-
-    const res = await fetch("/api/admin/staff", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...body,
-        department: body.department || undefined,
-        qualification: body.qualification || undefined,
-        email: body.email || undefined,
-        phone: body.phone || undefined,
-      }),
-    });
-    const data = await res.json();
-    if (data.ok) {
-      setMessage(editingId ? "Staff updated successfully!" : "Staff added successfully!");
-      setForm({ name: "", role: "", department: "", qualification: "", email: "", phone: "" });
+    if (editingId) {
+      await fetch(`/api/staff/${editingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
       setEditingId(null);
-      await fetchStaff();
     } else {
-      setMessage(data.error ?? "Something went wrong.");
+      await fetch('/api/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
     }
-    setSubmitting(false);
-  }
+    setForm({ name: '', position: '', department: '', email: '', photoUrl: '', bio: '' });
+    fetchStaff();
+  };
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this staff member?")) return;
-    await fetch(`/api/admin/staff?id=${id}`, { method: "DELETE" });
-    await fetchStaff();
-  }
+  const handleEdit = (s: Staff) => {
+    setForm({ name: s.name, position: s.position, department: s.department, email: s.email || '', photoUrl: s.photoUrl || '', bio: s.bio || '' });
+    setEditingId(s.id);
+  };
+
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/staff/${id}`, { method: 'DELETE' });
+    fetchStaff();
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Manage Staff</h1>
+    <div className="flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-sm border-r border-gray-100 p-6">
+        <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
+        <nav className="space-y-2">
+          <a href="/admin/dashboard" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Dashboard</a>
+          <a href="/admin/queries" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Queries</a>
+          <a href="/admin/admissions" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Admissions</a>
+          <a href="/admin/notices" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Notices</a>
+          <a href="/admin/staff" className="block px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Staff</a>
+        </nav>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? "Edit Staff Member" : "Add Staff Member"}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium mb-1">Name *</label>
-              <input
-                required
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="Full name"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Role *</label>
-              <input
-                required
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.role}
-                onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                placeholder="Campus Chief, Lecturer, etc."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Department</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.department}
-                onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
-                placeholder="e.g., Education, Management"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Qualification</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.qualification}
-                onChange={(e) => setForm((f) => ({ ...f, qualification: e.target.value }))}
-                placeholder="e.g., M.Ed., PhD"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                placeholder="email@example.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Phone</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.phone}
-                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                placeholder="+977-..."
-              />
-            </div>
-            <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
-              <Button type="submit" disabled={submitting}>
-                {submitting ? (editingId ? "Updating..." : "Saving...") : editingId ? "Update Staff" : "Save Staff"}
-              </Button>
-              {editingId && (
-                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
-                  Cancel
-                </Button>
-              )}
-              {message && (
-                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
-                  {message}
-                </span>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-6">Staff</h1>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Existing Staff ({staff.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
-          ) : staff.length === 0 ? (
-            <div className="text-sm text-black/60 dark:text-white/60">No staff added yet.</div>
-          ) : (
-            <div className="grid gap-3">
-              {staff.map((s) => (
-                <div
-                  key={s.id}
-                  className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
-                >
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm">{s.name}</div>
-                    <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                      {s.role}{s.department ? ` · ${s.department}` : ""}
-                    </div>
-                    {s.qualification && (
-                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">{s.qualification}</div>
-                    )}
-                    {(s.email || s.phone) && (
-                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">
-                        {s.email}{s.email && s.phone ? " · " : ""}{s.phone}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      onClick={() => startEdit(s)}
-                      className="text-xs text-blue-500 hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(s.id)}
-                      className="text-xs text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="Name"
+              value={form.name}
+              onChange={e => setForm({ ...form, name: e.target.value })}
+              className="border rounded p-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Position"
+              value={form.position}
+              onChange={e => setForm({ ...form, position: e.target.value })}
+              className="border rounded p-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Department"
+              value={form.department}
+              onChange={e => setForm({ ...form, department: e.target.value })}
+              className="border rounded p-2"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={e => setForm({ ...form, email: e.target.value })}
+              className="border rounded p-2"
+            />
+            <input
+              type="url"
+              placeholder="Photo URL"
+              value={form.photoUrl}
+              onChange={e => setForm({ ...form, photoUrl: e.target.value })}
+              className="border rounded p-2"
+            />
+          </div>
+          <textarea
+            placeholder="Bio"
+            value={form.bio}
+            onChange={e => setForm({ ...form, bio: e.target.value })}
+            className="border rounded p-2 w-full mb-4"
+            rows={3}
+          />
+          <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            {editingId ? 'Update Staff' : 'Add Staff'}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => { setEditingId(null); setForm({ name: '', position: '', department: '', email: '', photoUrl: '', bio: '' }); }}
+              className="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+            >
+              Cancel
+            </button>
           )}
-        </CardContent>
-      </Card>
+        </form>
+
+        {/* List */}
+        <div className="space-y-4">
+          {staff.map(s => (
+            <div key={s.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold">{s.name}</h3>
+              <p className="text-sm text-gray-600 mb-2">{s.position} - {s.department}</p>
+              {s.email && <p className="text-sm">Email: {s.email}</p>}
+              {s.bio && <p className="mb-4">{s.bio}</p>}
+              <div className="space-x-2">
+                <button onClick={() => handleEdit(s)} className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
+                <button onClick={() => handleDelete(s.id)} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

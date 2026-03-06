@@ -5,6 +5,8 @@ import { site } from "@/content/site";
 import { formatDate } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Notices",
   description: `Latest notices and announcements from ${site.fullName}.`,
@@ -12,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function NoticesPage() {
   const notices = await prisma.notice.findMany({
-    orderBy: { dateISO: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 
   return (
@@ -37,7 +39,7 @@ export default async function NoticesPage() {
         {notices.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold mb-2">No notices yet</h3>
+            <h3 className="text-xl font-semibold mb-2">More notices coming soon</h3>
             <p className="text-black/60 dark:text-white/60">
               Check back soon for the latest updates.
             </p>
@@ -56,27 +58,15 @@ export default async function NoticesPage() {
                     </Badge>
                   ) : null}
                   <span className="text-xs text-black/60 dark:text-white/60">
-                    {formatDate(n.dateISO)}
+                    {formatDate(n.createdAt.toISOString().slice(0, 10))}
                   </span>
-                  {n.fileUrl ? (
-                    <a
-                      className="ml-auto text-xs font-semibold text-[color:var(--primary)] dark:text-[color:var(--accent)] underline underline-offset-4 hover:no-underline"
-                      href={n.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download ↓
-                    </a>
-                  ) : null}
                 </div>
                 <div className="text-base font-bold text-[color:var(--primary)] dark:text-white mb-1">
                   {n.title}
                 </div>
-                {n.summary ? (
-                  <div className="text-sm text-black/70 dark:text-white/70 leading-7">
-                    {n.summary}
-                  </div>
-                ) : null}
+                <div className="text-sm text-black/70 dark:text-white/70 leading-7">
+                  {n.content}
+                </div>
               </div>
             ))}
           </div>

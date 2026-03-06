@@ -15,7 +15,7 @@ export function middleware(req: NextRequest) {
     // Protect all /admin routes
     if (pathname.startsWith("/admin")) {
         const session = req.cookies.get("admin_session");
-        if (session?.value !== "1") {
+        if (session?.value !== "true") {
             const loginUrl = req.nextUrl.clone();
             loginUrl.pathname = "/admin/login";
             return NextResponse.redirect(loginUrl);

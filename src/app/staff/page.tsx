@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { site } from "@/content/site";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Faculty & Staff",
   description: `Meet the faculty and staff of ${site.fullName}.`,
@@ -13,7 +15,7 @@ export default async function StaffPage() {
 
   const grouped = staff.reduce(
     (acc, s) => {
-      const key = s.role ?? "Other";
+      const key = s.position ?? "Other";
       if (!acc[key]) acc[key] = [];
       acc[key].push(s);
       return acc;
@@ -69,9 +71,6 @@ export default async function StaffPage() {
                       {s.department && (
                         <div className="text-xs text-[color:var(--accent)] font-medium mt-0.5">{s.department}</div>
                       )}
-                      {s.qualification && (
-                        <div className="text-xs text-black/60 dark:text-white/60 mt-1">{s.qualification}</div>
-                      )}
                       <div className="mt-3 space-y-1">
                         {s.email && (
                           <a
@@ -80,11 +79,6 @@ export default async function StaffPage() {
                           >
                             ✉ {s.email}
                           </a>
-                        )}
-                        {s.phone && (
-                          <div className="text-xs text-black/60 dark:text-white/60">
-                            📞 {s.phone}
-                          </div>
                         )}
                       </div>
                     </div>

@@ -7,7 +7,7 @@ import { logger } from "@/lib/logger";
 export async function GET() {
   try {
     const data = await prisma.notice.findMany({
-      orderBy: { dateISO: "desc" },
+      orderBy: { createdAt: "desc" },
     });
     return successResponse({ notices: data });
   } catch (error) {

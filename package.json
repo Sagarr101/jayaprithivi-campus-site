@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "set \"NODE_OPTIONS=--max-old-space-size=4096\" && next dev --webpack",
-    "build": "set \"NEXT_DISABLE_TURBOPACK=1\" && set \"NODE_OPTIONS=--max-old-space-size=4096\" && next build --webpack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "prisma:generate": "prisma generate",
@@ -13,10 +13,13 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "cloudinary": "^2.9.0",
     "next": "16.1.6",
+    "openai": "^6.27.0",
     "prisma": "^5.22.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "recharts": "^3.7.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

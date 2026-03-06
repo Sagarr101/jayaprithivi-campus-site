@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
+import Chatbot from "@/components/Chatbot";
 import { site } from "@/content/site";
 import { formatDate } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
@@ -198,15 +199,9 @@ export default async function Home() {
                       {e.type ? <Badge>{e.type}</Badge> : null}
                       <span className="text-xs text-black/60 dark:text-white/60">
                         {formatDate(e.dateISO)}
-                        {e.time ? ` • ${e.time}` : ""}
                       </span>
                     </div>
                     <div className="mt-2 text-sm font-semibold">{e.title}</div>
-                    {e.location ? (
-                      <div className="mt-1 text-sm text-black/70 dark:text-white/70">
-                        {e.location}
-                      </div>
-                    ) : null}
                   </div>
                 ))}
                 <div className="pt-2">
@@ -216,6 +211,39 @@ export default async function Home() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Testimonials Section */}
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--accent)]/10 text-[color:var(--primary)] mb-3">
+              Testimonials
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight mb-6">What our students say</h2>
+            <div className="space-y-6">
+              {[
+                {
+                  name: "Sita Thapa",
+                  program: "BBS 2023",
+                  quote: "This campus gave me the foundation to pursue my career in business.",
+                },
+                {
+                  name: "Ram Bhandari",
+                  program: "BA 2022",
+                  quote: "The faculty here genuinely care about students. Best decision of my life.",
+                },
+                {
+                  name: "Gita Rokaya",
+                  program: "BEd 2024",
+                  quote: "The education program prepared me completely for my teaching career.",
+                },
+              ].map((t, i) => (
+                <Card key={i} className="p-6 shadow-sm border border-gray-100">
+                  <p className="text-lg text-black/80 italic">“{t.quote}”</p>
+                  <p className="mt-4 font-semibold">{t.name}</p>
+                  <p className="text-sm text-black/60">{t.program}</p>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -295,6 +323,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      <Chatbot />
     </div>
   );
 }

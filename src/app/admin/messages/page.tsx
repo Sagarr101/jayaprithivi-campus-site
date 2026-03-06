@@ -2,8 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { formatDate } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminMessagesPage() {
-    const messages = await prisma.message.findMany({ orderBy: { createdAt: "desc" } });
+    const messages = await prisma.query.findMany({ orderBy: { createdAt: "desc" } });
 
     return (
         <div className="space-y-6">

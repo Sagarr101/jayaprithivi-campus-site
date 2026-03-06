@@ -21,10 +21,8 @@ export const courseUpdateSchema = courseSchema.extend({
 // Notice validation
 export const noticeSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
-  dateISO: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-  category: z.string().max(100).optional().nullable(),
-  summary: z.string().max(1000).optional().nullable(),
-  fileUrl: z.string().url("Invalid URL").optional().nullable(),
+  content: z.string().min(1, "Content is required"),
+  category: z.string().max(100).optional(),
 });
 
 export const noticeUpdateSchema = noticeSchema.extend({
@@ -48,11 +46,11 @@ export const eventUpdateSchema = eventSchema.extend({
 // Staff validation
 export const staffSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
-  role: z.string().min(1, "Role is required").max(255),
-  department: z.string().max(100).optional().nullable(),
-  qualification: z.string().max(255).optional().nullable(),
-  email: z.string().email("Invalid email").optional().nullable(),
-  phone: z.string().max(20).optional().nullable(),
+  position: z.string().min(1, "Position is required").max(255),
+  department: z.string().min(1, "Department is required").max(100),
+  email: z.string().email("Invalid email").optional(),
+  photoUrl: z.string().url("Invalid URL").optional(),
+  bio: z.string().max(1000).optional(),
 });
 
 export const staffUpdateSchema = staffSchema.extend({

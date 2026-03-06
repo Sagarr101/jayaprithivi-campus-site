@@ -1,219 +1,136 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-
-type Notice = {
+interface Notice {
   id: number;
   title: string;
-  dateISO: string;
-  category: string | null;
-  summary: string | null;
-  fileUrl: string | null;
-};
+  content: string;
+  category: string;
+  createdAt: string;
+}
 
-export default function AdminNoticesPage() {
-  const [notices, setNotices] = React.useState<Notice[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [editingId, setEditingId] = React.useState<number | null>(null);
-  const [form, setForm] = React.useState({
-    title: "",
-    dateISO: "",
-    category: "",
-    summary: "",
-    fileUrl: "",
-  });
-  const [submitting, setSubmitting] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+export default function AdminNotices() {
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [form, setForm] = useState({ title: '', content: '', category: 'general' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  async function fetchNotices() {
-    const res = await fetch("/api/admin/notices");
-    const data = await res.json();
-    setNotices(data.data?.notices || []);
-    setLoading(false);
-  }
-
-  React.useEffect(() => {
+  useEffect(() => {
     fetchNotices();
   }, []);
 
-  function startEdit(notice: Notice) {
-    setEditingId(notice.id);
-    setForm({
-      title: notice.title,
-      dateISO: notice.dateISO,
-      category: notice.category ?? "",
-      summary: notice.summary ?? "",
-      fileUrl: notice.fileUrl ?? "",
-    });
-    setMessage("");
-  }
+  const fetchNotices = () => {
+    fetch('/api/notices')
+      .then(r => r.json())
+      .then(setNotices);
+  };
 
-  function cancelEdit() {
-    setEditingId(null);
-    setForm({ title: "", dateISO: "", category: "", summary: "", fileUrl: "" });
-    setMessage("");
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setMessage("");
-
-    const method = editingId ? "PUT" : "POST";
-    const body = editingId ? { id: editingId, ...form } : form;
-
-    const res = await fetch("/api/admin/notices", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...body,
-        category: body.category || undefined,
-        summary: body.summary || undefined,
-        fileUrl: body.fileUrl || undefined,
-      }),
-    });
-    const data = await res.json();
-    if (data.ok) {
-      setMessage(editingId ? "Notice updated successfully!" : "Notice added successfully!");
-      setForm({ title: "", dateISO: "", category: "", summary: "", fileUrl: "" });
+    if (editingId) {
+      await fetch(`/api/notices/${editingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
       setEditingId(null);
-      await fetchNotices();
     } else {
-      setMessage(data.error ?? "Something went wrong.");
+      await fetch('/api/notices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
     }
-    setSubmitting(false);
-  }
+    setForm({ title: '', content: '', category: 'general' });
+    fetchNotices();
+  };
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this notice?")) return;
-    await fetch(`/api/admin/notices?id=${id}`, { method: "DELETE" });
-    await fetchNotices();
-  }
+  const handleEdit = (notice: Notice) => {
+    setForm({ title: notice.title, content: notice.content, category: notice.category });
+    setEditingId(notice.id);
+  };
+
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/notices/${id}`, { method: 'DELETE' });
+    fetchNotices();
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Manage Notices</h1>
+    <div className="flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-sm border-r border-gray-100 p-6">
+        <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
+        <nav className="space-y-2">
+          <a href="/admin/dashboard" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Dashboard</a>
+          <a href="/admin/queries" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Queries</a>
+          <a href="/admin/admissions" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Admissions</a>
+          <a href="/admin/notices" className="block px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Notices</a>
+          <a href="/admin/staff" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Staff</a>
+        </nav>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? "Edit Notice" : "Create Notice"}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium mb-1">Title *</label>
-              <input
-                required
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.title}
-                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                placeholder="Notice title"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Date *</label>
-              <input
-                required
-                type="date"
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.dateISO}
-                onChange={(e) => setForm((f) => ({ ...f, dateISO: e.target.value }))}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.category}
-                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                placeholder="e.g., Exam, Holiday, Admission"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">File URL</label>
-              <input
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                value={form.fileUrl}
-                onChange={(e) => setForm((f) => ({ ...f, fileUrl: e.target.value }))}
-                placeholder="https://..."
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium mb-1">Summary</label>
-              <textarea
-                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)] min-h-[80px]"
-                value={form.summary}
-                onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))}
-                placeholder="Brief description..."
-              />
-            </div>
-            <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
-              <Button type="submit" disabled={submitting}>
-                {submitting ? (editingId ? "Updating..." : "Saving...") : editingId ? "Update Notice" : "Save Notice"}
-              </Button>
-              {editingId && (
-                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
-                  Cancel
-                </Button>
-              )}
-              {message && (
-                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
-                  {message}
-                </span>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-6">Notices</h1>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Existing Notices ({notices.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
-          ) : notices.length === 0 ? (
-            <div className="text-sm text-black/60 dark:text-white/60">No notices yet.</div>
-          ) : (
-            <div className="grid gap-3">
-              {notices.map((n) => (
-                <div
-                  key={n.id}
-                  className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
-                >
-                  <div className="flex-1">
-                    <div className="font-semibold text-sm">{n.title}</div>
-                    <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                      {n.dateISO}{n.category ? ` · ${n.category}` : ""}
-                    </div>
-                    {n.summary && (
-                      <div className="text-xs text-black/50 dark:text-white/50 mt-1">{n.summary}</div>
-                    )}
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      onClick={() => startEdit(n)}
-                      className="text-xs text-blue-500 hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(n.id)}
-                      className="text-xs text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <input
+              type="text"
+              placeholder="Title"
+              value={form.title}
+              onChange={e => setForm({ ...form, title: e.target.value })}
+              className="border rounded p-2"
+              required
+            />
+            <select
+              value={form.category}
+              onChange={e => setForm({ ...form, category: e.target.value })}
+              className="border rounded p-2"
+            >
+              <option value="general">General</option>
+              <option value="academic">Academic</option>
+              <option value="event">Event</option>
+            </select>
+          </div>
+          <textarea
+            placeholder="Content"
+            value={form.content}
+            onChange={e => setForm({ ...form, content: e.target.value })}
+            className="border rounded p-2 w-full mb-4"
+            rows={4}
+            required
+          />
+          <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            {editingId ? 'Update Notice' : 'Add Notice'}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => { setEditingId(null); setForm({ title: '', content: '', category: 'general' }); }}
+              className="ml-2 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+            >
+              Cancel
+            </button>
           )}
-        </CardContent>
-      </Card>
+        </form>
+
+        {/* List */}
+        <div className="space-y-4">
+          {notices.map(n => (
+            <div key={n.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold">{n.title}</h3>
+              <p className="text-sm text-gray-600 mb-2">{n.category} - {new Date(n.createdAt).toLocaleDateString()}</p>
+              <p className="mb-4">{n.content}</p>
+              <div className="space-x-2">
+                <button onClick={() => handleEdit(n)} className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
+                <button onClick={() => handleDelete(n.id)} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

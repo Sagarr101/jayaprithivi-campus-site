@@ -6,59 +6,31 @@ import * as React from "react";
 import { Button } from "@/components/ui/Button";
 import { site } from "@/content/site";
 
-const galleryItems = [
-  {
-    src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1024&auto=format&fit=crop",
-    title: "Campus View",
-    category: "Campus",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1024&auto=format&fit=crop",
-    title: "Graduation Day",
-    category: "Events",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1024&auto=format&fit=crop",
-    title: "Classrooms",
-    category: "Academics",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1532094349884-543559b979dc?q=80&w=1024&auto=format&fit=crop",
-    title: "Laboratory",
-    category: "Labs",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1024&auto=format&fit=crop",
-    title: "Computer Lab",
-    category: "Labs",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1024&auto=format&fit=crop",
-    title: "Cultural Program",
-    category: "Events",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1024&auto=format&fit=crop",
-    title: "Seminar",
-    category: "Academics",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1024&auto=format&fit=crop",
-    title: "Sports Ground",
-    category: "Sports",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=1024&auto=format&fit=crop",
-    title: "Library",
-    category: "Campus",
-  },
-];
-
-const categories = ["All", ...Array.from(new Set(galleryItems.map((g) => g.category)))];
+interface GalleryItem {
+  id: number;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  category: string;
+  createdAt: string;
+}
 
 export default function GalleryPage() {
+  const [galleryItems, setGalleryItems] = React.useState<GalleryItem[]>([]);
   const [activeCategory, setActiveCategory] = React.useState("All");
-  const [lightbox, setLightbox] = React.useState<null | { src: string; title: string }>(null);
+  const [lightbox, setLightbox] = React.useState<null | { src: string; title: string; description?: string }>(null);
+
+  React.useEffect(() => {
+    fetch('/api/gallery')
+      .then(r => r.json())
+      .then(setGalleryItems)
+      .catch(() => {
+        // Fallback to empty if API fails
+        setGalleryItems([]);
+      });
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(galleryItems.map((g) => g.category)))];
 
   const filtered = activeCategory === "All" ? galleryItems : galleryItems.filter((g) => g.category === activeCategory);
 
@@ -98,15 +70,15 @@ export default function GalleryPage() {
 
         {/* Gallery Grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((item, i) => (
+          {filtered.map((item) => (
             <button
-              key={i}
-              onClick={() => setLightbox({ src: item.src, title: item.title })}
+              key={item.id}
+              onClick={() => setLightbox({ src: item.imageUrl, title: item.title, description: item.description })}
               className="group relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={item.src}
+                src={item.imageUrl}
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
@@ -139,7 +111,10 @@ export default function GalleryPage() {
               className="w-full rounded-2xl shadow-2xl max-h-[80vh] object-contain"
             />
             <div className="mt-4 flex items-center justify-between">
-              <div className="text-white font-semibold">{lightbox.title}</div>
+              <div className="text-white">
+                <div className="font-semibold">{lightbox.title}</div>
+                {lightbox.description && <div className="text-sm text-white/80 mt-1">{lightbox.description}</div>}
+              </div>
               <button
                 onClick={() => setLightbox(null)}
                 className="text-white/70 hover:text-white text-sm underline"

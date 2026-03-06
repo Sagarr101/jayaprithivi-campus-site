@@ -45,8 +45,8 @@ export default function ContactPage() {
               <div className="space-y-4">
                 {[
                   { label: "Address", value: site.contact.address, icon: "📍" },
-                  { label: "Phone", value: site.contact.phone, icon: "📞" },
-                  { label: "Email", value: site.contact.email, icon: "✉️", href: `mailto:${site.contact.email}` },
+                  { label: "Phone", value: "+977-92-420123", icon: "📞" },
+                  { label: "Email", value: "info@jayaprithivicampus.edu.np", icon: "✉️", href: "mailto:info@jayaprithivicampus.edu.np" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-start gap-3">
                     <span className="text-lg mt-0.5">{item.icon}</span>

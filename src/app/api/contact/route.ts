@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { messageSchema } from "@/lib/validation";
+import { querySchema } from "@/utils/validators";
 import { errorResponse, successResponse } from "@/lib/apiResponse";
 import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const validation = messageSchema.safeParse(body);
+    const validation = querySchema.safeParse(body);
 
     if (!validation.success) {
       logger.warn("Contact form validation failed", validation.error.flatten());
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const created = await prisma.message.create({
+    const created = await prisma.query.create({
       data: validation.data,
     });
 

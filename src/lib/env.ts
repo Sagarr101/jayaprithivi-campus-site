@@ -2,7 +2,7 @@
  * Validates that all required environment variables are set
  */
 export function validateEnv() {
-  const required = ["DATABASE_URL", "ADMIN_PASSWORD"];
+  const required = ["DATABASE_URL", "ADMIN_PASSWORD", "OPENAI_API_KEY"];
   const missing: string[] = [];
 
   required.forEach((key) => {
