@@ -106,13 +106,14 @@ export default async function Home() {
           </div>
         </div>
       </section>
-                  {item.title}
-                </div>
-                <div className="mt-2 text-xl font-bold text-[color:var(--primary)] dark:text-white">
-                  {item.value}
-                </div>
-              </Card>
-            ))}
+                {/* Courses List */}
+                {courses && courses.map((course) => (
+                  <Card key={course.id}>
+                    <div>
+                      {course.title}
+                    </div>
+                  </Card>
+                ))}
         </div>
       </section>
 
