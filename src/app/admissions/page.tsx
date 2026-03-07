@@ -61,13 +61,11 @@ export default function AdmissionsPage() {
             {steps.map((s, i) => (
               <div
                 key={i}
-                className="bg-white shadow-lg rounded-xl p-6 group hover:-translate-y-1 transition-all"
+                className="card flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8"
               >
-                <div className="flex items-start gap-4 mb-3">
-                  <div className="font-bold text-violet-600 text-xs">{s.step}</div>
-                </div>
-                <div className="font-bold text-indigo-900 mb-1">{s.title}</div>
-                <div className="text-sm text-gray-700 leading-6">{s.desc}</div>
+                <div className="text-2xl font-bold text-violet-600 mb-2">{s.step}</div>
+                <div className="card-title mb-1">{s.title}</div>
+                <div className="card-desc card-secondary">{s.desc}</div>
               </div>
             ))}
           </div>
@@ -99,18 +97,18 @@ export default function AdmissionsPage() {
         {/* Required Documents */}
         <div className="grid gap-8 md:grid-cols-2 mb-16">
           <div>
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-indigo-900/10 text-indigo-900 mb-3">
               Documents
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">Required Documents</h2>
+            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-6">Required Documents</h2>
             <div className="space-y-3">
               {requiredDocs.map((doc, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 bg-white shadow-lg rounded-xl p-4"
+                  className="card flex items-center gap-3 bg-white shadow-lg rounded-xl p-4"
                 >
                   <span className="text-violet-600 font-bold text-lg mt-0.5">✓</span>
-                  <span className="text-sm text-gray-700">{doc}</span>
+                  <span className="text-base font-bold text-gray-900">{doc}</span>
                 </div>
               ))}
             </div>

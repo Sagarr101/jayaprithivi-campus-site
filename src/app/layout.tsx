@@ -24,19 +24,34 @@ export const metadata: Metadata = {
   description: site.description,
 };
 
+import IntroAnimation from "@/components/IntroAnimation";
+import { useState } from "react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [showIntro, setShowIntro] = useState(true);
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-dvh antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-dvh antialiased bg-gray-50 text-gray-700`}
       >
-        <SiteHeader />
-        <main className="min-h-[calc(100dvh-64px)]">{children}</main>
-        <SiteFooter />
+        {showIntro && (
+          <IntroAnimation onFinish={() => setShowIntro(false)} />
+        )}
+        {!showIntro && (
+          <>
+            <SiteHeader />
+            <main className="min-h-[calc(100dvh-64px)]">
+              <div className="container mx-auto px-6">
+                {children}
+              </div>
+            </main>
+            <SiteFooter />
+          </>
+        )}
       </body>
     </html>
   );

@@ -21,52 +21,57 @@ export default async function NoticesPage() {
     <div>
       {/* Page Hero */}
       <div className="bg-indigo-900 text-white py-20 px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600 text-white mb-4">
+        <div className="mx-auto max-w-7xl text-center">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-violet-600 text-white mb-4">
             Announcements
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
             Notices & Announcements
           </h1>
-          <p className="mt-4 text-white/75 text-lg max-w-2xl">
-            Stay up to date with official notices, exam schedules, holiday
-            announcements, and admission updates.
+          <p className="mt-4 text-white text-lg font-bold max-w-2xl mx-auto">
+            Stay up to date with official notices, exam schedules, holiday announcements, and admission updates.
           </p>
         </div>
       </div>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 bg-gray-50">
+      <section className="mx-auto max-w-7xl px-6 py-20 bg-gray-50">
         {notices.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-5xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold mb-2">More notices coming soon</h3>
-            <p className="text-gray-500">
+            <h3 className="text-2xl font-extrabold mb-2">More notices coming soon</h3>
+            <p className="text-gray-700 font-bold">
               Check back soon for the latest updates.
             </p>
           </div>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {notices.map((n) => (
               <div
                 key={n.id}
-                className="bg-white shadow-lg rounded-xl p-6 group hover:shadow-md transition-all hover:border-violet-600 cursor-default"
+                className="card shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8 flex flex-col"
               >
-                <div className="flex flex-wrap items-center gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
                   {n.category ? (
                     <Badge className="bg-indigo-900/10 text-indigo-900 border-none">
                       {n.category}
                     </Badge>
                   ) : null}
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs font-bold text-gray-500">
                     {formatDate(n.createdAt.toISOString().slice(0, 10))}
                   </span>
                 </div>
-                <div className="text-base font-bold text-indigo-900 mb-1">
+                <div className="card-title mb-2 text-base font-bold text-indigo-900">
                   {n.title}
                 </div>
-                <div className="text-sm text-gray-700 leading-7">
+                <div className="card-desc card-secondary mb-4 text-sm text-gray-700 leading-7">
                   {n.content}
                 </div>
+                <a
+                  href={`/notices/${n.id}`}
+                  className="btn bg-violet-600 text-white hover:bg-violet-700 rounded-lg mt-auto text-center font-bold transition-all"
+                >
+                  Read More
+                </a>
               </div>
             ))}
           </div>

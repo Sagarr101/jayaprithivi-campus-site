@@ -7,6 +7,7 @@ if (!process.env.OPENAI_API_KEY) {
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  baseURL: 'https://api.x.ai/v1',
 });
 
 const SYSTEM_PROMPT = `
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
     ];
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'grok-beta',
       messages,
       max_tokens: 500,
       temperature: 0.7,

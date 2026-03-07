@@ -59,27 +59,14 @@ export default async function CoursesPage() {
                     <div className="flex items-end justify-between mb-8">
                         <h2 className="text-3xl font-bold tracking-tight text-gray-900">Undergraduate Programs</h2>
                     </div>
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {undergrad.map((course) => (
-                            <Card key={course.id} className="bg-white shadow-lg rounded-xl hover:-translate-y-1 transition-transform border-t-4 border-t-indigo-900 flex flex-col">
-                                <CardHeader className="pb-2">
-                                    {course.department && (
-                                        <Badge className="self-start mb-2 bg-indigo-900/10 text-indigo-900 border-none">
-                                            {course.department}
-                                        </Badge>
-                                    )}
-                                    <CardTitle className="text-lg">{course.name}</CardTitle>
-                                    <div className="text-sm text-black/60 dark:text-white/60">Duration: <span className="font-semibold">{course.duration}</span></div>
-                                </CardHeader>
-                                <CardContent className="flex-1 flex flex-col gap-4">
-                                    <p className="text-sm text-gray-700 leading-6 flex-1">
-                                        {course.description}
-                                    </p>
-                                    <Button href="/admissions" className="bg-violet-600 text-white hover:bg-violet-700 w-full text-center mt-2">
-                                        Apply Now
-                                    </Button>
-                                </CardContent>
-                            </Card>
+                            <div key={course.id} className="card flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8">
+                                <div className="card-title mb-2">{course.name}</div>
+                                <div className="card-desc card-secondary mb-2">{course.department} • {course.duration}</div>
+                                <div className="text-base font-bold text-gray-900 mb-4">{course.description}</div>
+                                <Button href="/admissions" className="btn bg-violet-600 text-white hover:bg-violet-700 rounded-lg mt-auto">Apply Now</Button>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -93,27 +80,14 @@ export default async function CoursesPage() {
                         <div className="flex items-end justify-between mb-8">
                             <h2 className="text-3xl font-bold tracking-tight text-gray-900">Postgraduate Programs</h2>
                         </div>
-                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {postgrad.map((course) => (
-                                <Card key={course.id} className="bg-white shadow-lg rounded-xl hover:-translate-y-1 transition-transform border-t-4 border-t-violet-600 flex flex-col">
-                                    <CardHeader className="pb-2">
-                                        {course.department && (
-                                            <Badge className="self-start mb-2 bg-violet-600/10 text-violet-600 border-none">
-                                                {course.department}
-                                            </Badge>
-                                        )}
-                                        <CardTitle className="text-lg text-gray-900">{course.name}</CardTitle>
-                                        <div className="text-sm text-black/60 dark:text-white/60">Duration: <span className="font-semibold">{course.duration}</span></div>
-                                    </CardHeader>
-                                    <CardContent className="flex-1 flex flex-col gap-4">
-                                        <p className="text-sm text-black/70 dark:text-white/70 leading-6 flex-1">
-                                            {course.description}
-                                        </p>
-                                        <Button href="/admissions" className="bg-violet-600 text-white hover:bg-violet-700 w-full text-center mt-2 font-bold">
-                                            Apply Now
-                                        </Button>
-                                    </CardContent>
-                                </Card>
+                                <div key={course.id} className="card flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8">
+                                    <div className="card-title mb-2">{course.name}</div>
+                                    <div className="card-desc card-secondary mb-2">{course.department} • {course.duration}</div>
+                                    <div className="text-base font-bold text-gray-900 mb-4">{course.description}</div>
+                                    <Button href="/admissions" className="btn bg-violet-600 text-white hover:bg-violet-700 rounded-lg mt-auto">Apply Now</Button>
+                                </div>
                             ))}
                         </div>
                     </div>

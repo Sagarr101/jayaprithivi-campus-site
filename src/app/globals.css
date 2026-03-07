@@ -1,35 +1,80 @@
+
 @import "tailwindcss";
 
 :root {
-  --primary: #4F46E5;
-  --secondary: #06B6D4;
-  --accent: #8B5CF6;
-  --background: #F9FAFB;
-  --card: #FFFFFF;
-  --text: #111827;
-  --muted: #F3F4F6;
-  --ring: #4F46E5;
+  --primary: #1e1b4b; /* indigo-900 */
+  --accent: #7c3aed; /* violet-600 */
+  --accent-hover: #6d28d9; /* violet-700 */
+  --background: #f9fafb; /* gray-50 */
+  --card: #ffffff;
+  --shadow: 0 4px 24px 0 rgb(0 0 0 / 0.08);
+  --title: #111827; /* gray-900 */
+  --body: #374151; /* gray-700 */
+  --secondary: #6b7280; /* gray-500 */
 }
 
-@theme inline {
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-background: var(--background);
-  --color-card: var(--card);
-  --color-text: var(--text);
-  --color-muted: var(--muted);
-  --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--text);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background-color: var(--background);
+  color: #111827;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div, a, li, label, input, textarea {
+  color: #111827 !important;
+  font-weight: bold !important;
+  letter-spacing: -0.02em;
+}
+
+.container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.card {
+  background: var(--card);
+  box-shadow: var(--shadow);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgb(124 58 237 / 0.08);
+}
+.btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 16px 0 rgb(124 58 237 / 0.16);
+}
+
+.card-title {
+  color: var(--title);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.card-desc {
+  color: var(--body);
+  font-size: 1rem;
+}
+.card-secondary {
+  color: var(--secondary);
 }
