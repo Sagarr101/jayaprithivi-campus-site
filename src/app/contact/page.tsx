@@ -108,7 +108,7 @@ export default function ContactPage() {
   );
                           height="220"
                           style={{ border: 0, display: "block" }}
-                          allowFullScreen
+                          allowFullScreen={true}
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
                         />

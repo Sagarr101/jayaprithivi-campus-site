@@ -162,4 +162,5 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onFinish }) => {
     </AnimatePresence>
   );
 };
+  export default IntroAnimation;
 
