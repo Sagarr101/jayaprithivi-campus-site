@@ -107,15 +107,18 @@ export default function ContactPage() {
     </div>
   );
                         <iframe
-                          height="220"
-                          style={{ border: 0, display: "block" }}
-                          allowFullScreen={true}
-                          loading="lazy"
-                          referrerPolicy="no-referrer-when-downgrade"
-                        />
-                        <div className="p-3 text-xs font-bold text-gray-500 text-center">
-                          Chainpur, Bajhang, Sudurpashchim Province, Nepal
-                        </div>
+                          <div className="w-full">
+                            <iframe
+                              height="220"
+                              style={{ border: 0, display: "block" }}
+                              allowFullScreen={true}
+                              loading="lazy"
+                              referrerPolicy="no-referrer-when-downgrade"
+                            />
+                            <div className="p-3 text-xs font-bold text-gray-500 text-center">
+                              Chainpur, Bajhang, Sudurpashchim Province, Nepal
+                            </div>
+                          </div>
                       </div>
                     </div>
                   </div>
