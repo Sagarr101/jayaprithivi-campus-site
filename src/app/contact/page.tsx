@@ -106,18 +106,6 @@ export default function ContactPage() {
       </section>
     </div>
   );
-                            <span>Saturday</span>
-                            <span className="font-bold text-red-500">Closed</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Map */}
-                      <div className="rounded-2xl border border-black/10 overflow-hidden shadow-lg">
-                        <iframe
-                          title="Jayaprithivi Campus Location"
-                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3479.12!2d81.19!3d29.54!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDMyJzI0LjAiTiA4McKwMTEnMjQuMCJF!5e0!3m2!1sen!2snp!4v1614000000000"
-                          width="100%"
                           height="220"
                           style={{ border: 0, display: "block" }}
                           allowFullScreen
