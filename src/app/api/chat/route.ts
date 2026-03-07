@@ -44,7 +44,7 @@ Campus Facilities:
 - Internet access, study materials
 
 Contact:
-- Phone: +977-92-420123
+- Phone: +977-9848436739
 - Email: info@jmc.edu.np
 - Website: www.jmc.edu.np
 
