@@ -112,7 +112,6 @@ export default async function Home() {
                   {item.value}
                 </div>
               </Card>
-            </Link>
           ))}
         </div>
       </section>
