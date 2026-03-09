@@ -1,14 +1,20 @@
 "use client";
-import IntroAnimation from "@/components/IntroAnimation";
-import { useState } from "react";
 
-export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
-  const [showIntro, setShowIntro] = useState(true);
-  // ...existing code for animation and layout...
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+
+export default function RootLayoutClient({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
-      {/* Place animation and layout logic here, using children */}
-      {children}
+      <SiteHeader />
+      <main className="min-h-[calc(100dvh-64px)]">
+        {children}
+      </main>
+      <SiteFooter />
     </>
   );
 }
