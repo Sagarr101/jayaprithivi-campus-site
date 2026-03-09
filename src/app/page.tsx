@@ -71,7 +71,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      
+
       {/* FEATURES SECTION */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
@@ -210,7 +210,7 @@ export default async function HomePage() {
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3 flex-shrink-0">
                 <img
-                  src="/campus-chief.jpeg"
+                  src="/campus-chief.jpg"
                   alt="Campus Chief Dirgha Raj Pandit"
                   className="w-full h-full object-cover object-center min-h-[300px]"
                 />
