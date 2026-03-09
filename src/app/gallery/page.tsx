@@ -82,10 +82,10 @@ export default function GalleryPage() {
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-4 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
-                <div className="text-lg font-bold mb-1">{item.title}</div>
-                <div className="text-xs font-bold text-violet-400">{item.category}</div>
+                <div className="text-lg font-extrabold mb-1 drop-shadow-lg">{item.title}</div>
+                <div className="text-xs font-bold">{item.category}</div>
               </div>
               <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="bg-white/20 backdrop-blur rounded-full px-2 py-1 text-white text-xs font-bold">

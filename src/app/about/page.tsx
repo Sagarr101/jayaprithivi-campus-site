@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-
-import { PageHeader } from "@/components/layout/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { site } from "@/content/site";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -21,15 +19,15 @@ export default function AboutPage() {
   return (
     <div>
       {/* Page Hero */}
-      <div className="bg-[color:var(--primary)] text-white py-20 px-4">
+      <div className="text-white py-20 px-4" style={{ background: "linear-gradient(120deg, #0d9488 0%, #f97316 100%)" }}>
         <div className="mx-auto max-w-6xl">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--accent)]/20 text-[color:var(--accent)] mb-4">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4" style={{ background: "rgba(255,255,255,0.2)", color: "#fff" }}>
             Est. 1995
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
             About Jayaprithivi Campus
           </h1>
-          <p className="mt-4 text-white/75 text-lg max-w-2xl">
+          <p className="mt-4 text-white/90 text-lg max-w-2xl">
             {site.fullName} is a leading academic institution in Bajhang, Nepal, committed to delivering quality education and shaping future leaders.
           </p>
         </div>
@@ -38,42 +36,42 @@ export default function AboutPage() {
       <section className="mx-auto max-w-6xl px-4 py-16">
         {/* Vision and Mission */}
         <div className="grid gap-6 md:grid-cols-2 mb-16">
-          <Card className="border-t-4 border-t-[color:var(--primary)] shadow-lg">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-[color:var(--primary)] text-[color:var(--accent)] flex items-center justify-center text-2xl mb-3">
+          <div className="rounded-2xl shadow-lg overflow-hidden border-t-4" style={{ borderTopColor: "#0d9488" }}>
+            <div className="p-8 bg-white">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: "#f0fdfa" }}>
                 🎯
               </div>
-              <CardTitle className="text-xl font-bold">Our Vision</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm leading-7 text-black/75 dark:text-white/75">
-              To be a premier institution of higher education that shapes ethical,
-              innovative, and socially responsible leaders who contribute meaningfully
-              to the development of Bajhang, Nepal, and beyond.
-            </CardContent>
-          </Card>
-          <Card className="border-t-4 border-t-[color:var(--accent)] shadow-lg">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-xl bg-[color:var(--accent)] text-[color:var(--primary)] flex items-center justify-center text-2xl mb-3">
+              <h3 className="text-xl font-bold mb-3" style={{ color: "#0f172a" }}>Our Vision</h3>
+              <p className="text-sm leading-7 text-gray-600">
+                To be a premier institution of higher education that shapes ethical,
+                innovative, and socially responsible leaders who contribute meaningfully
+                to the development of Bajhang, Nepal, and beyond.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-2xl shadow-lg overflow-hidden border-t-4" style={{ borderTopColor: "#f97316" }}>
+            <div className="p-8 bg-white">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: "#fff7ed" }}>
                 🚀
               </div>
-              <CardTitle className="text-xl font-bold">Our Mission</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm leading-7 text-black/75 dark:text-white/75">
-              To provide accessible, high-quality education at the bachelor&apos;s and
-              master&apos;s levels, foster research and critical thinking, build
-              employable skills, and serve the community through academic excellence.
-            </CardContent>
-          </Card>
+              <h3 className="text-xl font-bold mb-3" style={{ color: "#0f172a" }}>Our Mission</h3>
+              <p className="text-sm leading-7 text-gray-600">
+                To provide accessible, high-quality education at the bachelor&apos;s and
+                master&apos;s levels, foster research and critical thinking, build
+                employable skills, and serve the community through academic excellence.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* College Overview */}
         <div className="grid gap-6 md:grid-cols-3 mb-16">
           <div className="md:col-span-2">
-            <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+            <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ background: "#f0fdfa", color: "#0d9488" }}>
               Overview
             </div>
-            <h2 className="text-3xl font-bold tracking-tight mb-6">Our Institution</h2>
-            <div className="space-y-4 text-base leading-8 text-black/75 dark:text-white/75">
+            <h2 className="text-3xl font-extrabold tracking-tight mb-6" style={{ color: "#0f172a" }}>Our Institution</h2>
+            <div className="space-y-4 text-base leading-8 text-gray-600">
               <p>
                 {site.fullName} is a constituent campus situated in the scenic hills of Chainpur,
                 Bajhang, in Sudurpashchim Province, Nepal. Affiliated with Far Western University,
@@ -98,63 +96,64 @@ export default function AboutPage() {
               { label: "Programs", value: "UG & PG" },
               { label: "Province", value: "Sudurpashchim" },
             ].map((item) => (
-              <Card key={item.label} className="p-4">
-                <div className="text-xs text-black/60 dark:text-white/60 uppercase tracking-wide">{item.label}</div>
-                <div className="mt-1 font-semibold text-[color:var(--primary)] dark:text-white">{item.value}</div>
-              </Card>
+              <div key={item.label} className="p-4 rounded-xl bg-white shadow-sm border-l-4" style={{ borderLeftColor: "#0d9488" }}>
+                <div className="text-xs uppercase tracking-wide text-gray-400">{item.label}</div>
+                <div className="mt-1 font-bold" style={{ color: "#0d9488" }}>{item.value}</div>
+              </div>
             ))}
           </div>
         </div>
 
         {/* Principal's Message */}
         <div className="mb-16">
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ background: "#fff7ed", color: "#f97316" }}>
             Leadership
           </div>
-          <h2 className="text-3xl font-bold tracking-tight mb-8">Principal&apos;s Message</h2>
-          <Card className="border-l-4 border-l-[color:var(--accent)] shadow-lg">
-            <CardContent className="p-8">
+          <h2 className="text-3xl font-extrabold tracking-tight mb-8" style={{ color: "#0f172a" }}>Campus Chief&apos;s Message</h2>
+          <div className="rounded-2xl shadow-lg overflow-hidden border-l-4" style={{ borderLeftColor: "#f97316" }}>
+            <div className="p-8 bg-white">
               <div className="flex flex-col md:flex-row gap-8 md:items-start">
                 <div className="flex-shrink-0">
-                  <div className="w-20 h-20 rounded-full bg-[color:var(--primary)] text-[color:var(--accent)] flex items-center justify-center text-3xl font-bold">
-                    P
-                  </div>
+                  <img
+                    src="/campus-chief.jpg"
+                    alt="Campus Chief Dirgha Raj Pandit"
+                    className="w-24 h-24 rounded-full object-cover"
+                    style={{ border: "3px solid #f97316" }}
+                  />
                 </div>
                 <div>
-                  <blockquote className="text-base leading-8 text-black/75 dark:text-white/75 italic">
+                  <blockquote className="text-base leading-8 text-gray-600 italic mb-4">
                     &ldquo;At Jayaprithivi Campus, we believe education is the most powerful tool to transform
                     lives and communities. We are committed to nurturing not just academic excellence, but
                     also character, values, and a spirit of service. I invite all aspiring students to join
                     us in this journey of knowledge and growth. Together, we will build a brighter future
                     for ourselves and for Nepal.&rdquo;
                   </blockquote>
-                  <div className="mt-4">
-                    <div className="font-bold text-[color:var(--primary)] dark:text-white">The Principal</div>
-                    <div className="text-sm text-black/60 dark:text-white/60">{site.fullName}</div>
-                  </div>
+                  <div className="font-bold" style={{ color: "#0d9488" }}>Dirgha Raj Pandit</div>
+                  <div className="text-sm text-gray-400">Campus Chief, {site.fullName}</div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* History Timeline */}
         <div>
-          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[color:var(--primary)]/10 text-[color:var(--primary)] dark:text-[color:var(--accent)] mb-3">
+          <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ background: "#f0fdfa", color: "#0d9488" }}>
             Our Journey
           </div>
-          <h2 className="text-3xl font-bold tracking-tight mb-8">History & Milestones</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight mb-8" style={{ color: "#0f172a" }}>History & Milestones</h2>
           <div className="relative">
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[color:var(--primary)]/20 dark:bg-white/10" />
+            <div className="absolute left-8 top-0 bottom-0 w-0.5" style={{ background: "#0d9488", opacity: 0.2 }} />
             <div className="space-y-6">
               {milestones.map((m, i) => (
                 <div key={i} className="relative flex gap-6 items-start">
-                  <div className="relative z-10 flex-shrink-0 w-16 h-16 rounded-full bg-[color:var(--primary)] text-[color:var(--accent)] flex items-center justify-center text-sm font-bold">
+                  <div className="relative z-10 flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: i % 2 === 0 ? "#0d9488" : "#f97316" }}>
                     {m.year}
                   </div>
-                  <Card className="flex-1 shadow-sm">
-                    <CardContent className="p-4 text-sm text-black/75 dark:text-white/75">{m.event}</CardContent>
-                  </Card>
+                  <div className="flex-1 rounded-xl bg-white shadow-sm p-4 border-l-2" style={{ borderLeftColor: i % 2 === 0 ? "#0d9488" : "#f97316" }}>
+                    <p className="text-sm text-gray-600">{m.event}</p>
+                  </div>
                 </div>
               ))}
             </div>

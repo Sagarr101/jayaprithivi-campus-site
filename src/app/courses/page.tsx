@@ -36,36 +36,43 @@ export default async function CoursesPage() {
     return (
         <div>
             {/* Page Hero */}
-            <div className="bg-indigo-900 text-white py-20 px-4">
+            <div className="text-white py-20 px-4" style={{ background: "linear-gradient(120deg, #0d9488 0%, #f97316 100%)" }}>
                 <div className="mx-auto max-w-6xl">
-                    <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600 text-white mb-4">
+                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-4" style={{ background: "rgba(255,255,255,0.2)", color: "#fff" }}>
                         Academic Programs
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
                         Courses & Programs
                     </h1>
-                    <p className="mt-4 text-white/75 text-lg max-w-2xl">
+                    <p className="mt-4 text-white/90 text-lg max-w-2xl">
                         Explore our undergraduate and postgraduate programs designed to equip you with the skills for tomorrow&apos;s world.
                     </p>
                 </div>
             </div>
 
-            <section className="mx-auto max-w-6xl px-4 py-16 bg-gray-50">
+            <section className="mx-auto max-w-6xl px-4 py-16">
                 {/* Undergraduate Programs */}
                 <div className="mb-16">
-                    <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
+                    <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ background: "#f0fdfa", color: "#0d9488" }}>
                         UG Programs
                     </div>
-                    <div className="flex items-end justify-between mb-8">
-                        <h2 className="text-3xl font-bold tracking-tight text-gray-900">Undergraduate Programs</h2>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <h2 className="text-3xl font-extrabold tracking-tight mb-8" style={{ color: "#0f172a" }}>Undergraduate Programs</h2>
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                         {undergrad.map((course) => (
-                            <div key={course.id} className="card flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8">
-                                <div className="card-title mb-2">{course.name}</div>
-                                <div className="card-desc card-secondary mb-2">{course.department} • {course.duration}</div>
-                                <div className="text-base font-bold text-gray-900 mb-4">{course.description}</div>
-                                <Button href="/admissions" className="btn bg-violet-600 text-white hover:bg-violet-700 rounded-lg mt-auto">Apply Now</Button>
+                            <div key={course.id} className="bg-white shadow-lg rounded-2xl hover:-translate-y-1 transition-transform border-t-4 flex flex-col overflow-hidden" style={{ borderTopColor: "#0d9488" }}>
+                                <div className="p-6 flex flex-col flex-1">
+                                    {course.department && (
+                                        <span className="self-start mb-2 px-3 py-1 rounded-full text-xs font-bold" style={{ background: "#f0fdfa", color: "#0d9488" }}>
+                                            {course.department}
+                                        </span>
+                                    )}
+                                    <div className="text-lg font-bold mb-1" style={{ color: "#0f172a" }}>{course.name}</div>
+                                    <div className="text-sm text-gray-400 mb-3">Duration: <span className="font-semibold text-gray-600">{course.duration}</span></div>
+                                    <p className="text-sm text-gray-600 leading-6 flex-1">{course.description}</p>
+                                    <Link href="/admissions" className="mt-4 block text-center px-4 py-2 rounded-full font-bold text-white text-sm hover:opacity-90 transition-opacity" style={{ background: "#f97316" }}>
+                                        Apply Now →
+                                    </Link>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -74,31 +81,39 @@ export default async function CoursesPage() {
                 {/* Postgraduate Programs */}
                 {postgrad.length > 0 && (
                     <div className="mb-16">
-                        <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-600/10 text-violet-600 mb-3">
+                        <div className="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3" style={{ background: "#fff7ed", color: "#f97316" }}>
                             PG Programs
                         </div>
-                        <div className="flex items-end justify-between mb-8">
-                            <h2 className="text-3xl font-bold tracking-tight text-gray-900">Postgraduate Programs</h2>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <h2 className="text-3xl font-extrabold tracking-tight mb-8" style={{ color: "#0f172a" }}>Postgraduate Programs</h2>
+                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                             {postgrad.map((course) => (
-                                <div key={course.id} className="card flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8">
-                                    <div className="card-title mb-2">{course.name}</div>
-                                    <div className="card-desc card-secondary mb-2">{course.department} • {course.duration}</div>
-                                    <div className="text-base font-bold text-gray-900 mb-4">{course.description}</div>
-                                    <Button href="/admissions" className="btn bg-violet-600 text-white hover:bg-violet-700 rounded-lg mt-auto">Apply Now</Button>
+                                <div key={course.id} className="bg-white shadow-lg rounded-2xl hover:-translate-y-1 transition-transform border-t-4 flex flex-col overflow-hidden" style={{ borderTopColor: "#f97316" }}>
+                                    <div className="p-6 flex flex-col flex-1">
+                                        {course.department && (
+                                            <span className="self-start mb-2 px-3 py-1 rounded-full text-xs font-bold" style={{ background: "#fff7ed", color: "#f97316" }}>
+                                                {course.department}
+                                            </span>
+                                        )}
+                                        <div className="text-lg font-bold mb-1" style={{ color: "#0f172a" }}>{course.name}</div>
+                                        <div className="text-sm text-gray-400 mb-3">Duration: <span className="font-semibold text-gray-600">{course.duration}</span></div>
+                                        <p className="text-sm text-gray-600 leading-6 flex-1">{course.description}</p>
+                                        <Link href="/admissions" className="mt-4 block text-center px-4 py-2 rounded-full font-bold text-white text-sm hover:opacity-90 transition-opacity" style={{ background: "#0d9488" }}>
+                                            Apply Now →
+                                        </Link>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
 
-                <div className="bg-indigo-900 p-8 md:p-12 text-white text-center rounded-xl">
-                    <h3 className="text-2xl font-bold mb-3 text-white">Ready to Start Your Journey?</h3>
-                    <p className="text-white/75 mb-6 max-w-lg mx-auto">Apply for admission to Jayaprithivi Campus today and take the first step toward your future.</p>
+                {/* CTA */}
+                <div className="p-8 md:p-12 text-white text-center rounded-2xl" style={{ background: "linear-gradient(120deg, #0d9488 0%, #f97316 100%)" }}>
+                    <h3 className="text-2xl font-extrabold mb-3">Ready to Start Your Journey?</h3>
+                    <p className="text-white/90 mb-6 max-w-lg mx-auto">Apply for admission to Jayaprithivi Campus today and take the first step toward your future.</p>
                     <div className="flex flex-col sm:flex-row justify-center gap-4">
-                        <Button href="/admissions" className="bg-violet-600 text-white font-bold border-none hover:bg-violet-700">Apply Now</Button>
-                        <Link href="/contact" className="inline-flex items-center justify-center rounded-xl border border-white/30 px-5 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition-colors">Contact Us</Link>
+                        <Link href="/admissions" className="px-8 py-3 rounded-full font-bold text-teal-700 bg-white hover:bg-gray-100 transition-colors">Apply Now →</Link>
+                        <Link href="/contact" className="px-8 py-3 rounded-full font-bold border-2 border-white text-white hover:bg-white hover:text-orange-600 transition-colors">Contact Us</Link>
                     </div>
                 </div>
             </section>
