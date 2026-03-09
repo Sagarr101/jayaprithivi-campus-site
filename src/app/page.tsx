@@ -34,23 +34,26 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* HERO SECTION */}
-      <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center bg-indigo-900">
+     {/* HERO SECTION */}
+      <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center">
         <img
-          src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop"
-          alt="Campus View"
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          src="/jaya-prithvi.png"
+          alt="Late Jaya Prithvi Bahadur Singh"
+          className="absolute inset-0 w-full h-full object-cover object-top z-0"
         />
         <div className="absolute inset-0 bg-black bg-opacity-60 z-10" />
         <div className="relative z-20 flex flex-col items-center justify-center w-full h-full text-center px-4">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-medium text-white/80 backdrop-blur">
-            <span>{site.location}</span>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-medium text-white/90 backdrop-blur">
+            🙏 In Loving Memory
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg">
-            {site.fullName}
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 drop-shadow-lg">
+            Late Jaya Prithvi Bahadur Singh
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-8">
-            Empowering students with quality education in the heart of Bajhang, Nepal.
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mb-2">
+            A visionary leader, reformer, and champion of education in Nepal.
+          </p>
+          <p className="text-base text-white/75 max-w-2xl mb-8">
+            Jayaprithivi Multiple Campus is proudly named in his honour, carrying forward his legacy of knowledge, justice, and service to the people of Bajhang and Nepal.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
@@ -68,7 +71,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
+      
       {/* FEATURES SECTION */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
@@ -192,40 +195,41 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* CAMPUS LIFE GALLERY SECTION */}
+      {/* MESSAGE BY CAMPUS CHIEF SECTION */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/10 text-indigo-900 mb-3">
-              Campus Life
+              Leadership
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-gray-900 mb-4">
-              Campus Life Gallery
+              Message by Campus Chief
             </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Experience vibrant student life, events, and activities at Jaya Prithivi Campus.
-            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { img: "https://images.unsplash.com/photo-1464983953574-0892a7162a1e?auto=format&fit=crop&w=800&q=80", alt: "Students", caption: "Students" },
-              { img: "https://images.unsplash.com/photo-1503676382389-2d6b7b8dd0c0?auto=format&fit=crop&w=800&q=80", alt: "Events", caption: "Events" },
-              { img: "https://images.unsplash.com/photo-1517520287167-4bbf64a7c7d4?auto=format&fit=crop&w=800&q=80", alt: "Campus Environment", caption: "Campus Environment" },
-              { img: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80", alt: "Activities", caption: "Activities" },
-            ].map((item, i) => (
-              <div key={i} className="rounded-xl overflow-hidden group shadow-lg">
-                <div className="relative h-64 w-full">
-                  <img
-                    src={item.img}
-                    alt={item.alt}
-                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <span className="text-white text-lg font-semibold drop-shadow">{item.caption}</span>
-                  </div>
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="flex flex-col md:flex-row">
+              <div className="md:w-1/3 flex-shrink-0">
+                <img
+                  src="/campus-chief.jpeg"
+                  alt="Campus Chief Dirgha Raj Pandit"
+                  className="w-full h-full object-cover object-center min-h-[300px]"
+                />
+              </div>
+              <div className="md:w-2/3 p-8 md:p-10 flex flex-col justify-center">
+                <blockquote className="text-base leading-8 text-gray-700 italic mb-6">
+                  &ldquo;At Jayaprithivi Campus, we are dedicated to nurturing the
+                  potential of every student through quality education, strong values,
+                  and a spirit of community. Our goal is to create graduates who are
+                  not only academically excellent but also responsible citizens who
+                  contribute positively to society. I warmly welcome all aspiring
+                  students to be part of our growing family.&rdquo;
+                </blockquote>
+                <div>
+                  <div className="text-lg font-bold text-indigo-900">Dirgha Raj Pandit</div>
+                  <div className="text-sm text-violet-600">Campus Chief, {site.fullName}</div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
