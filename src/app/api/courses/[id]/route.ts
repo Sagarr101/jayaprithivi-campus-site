@@ -7,7 +7,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.query.delete({ where: { id: parseInt(id) } });
+    await prisma.course.delete({ where: { id: parseInt(id) } });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
@@ -21,7 +21,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.json();
-    const updated = await prisma.query.update({
+    const updated = await prisma.course.update({
       where: { id: parseInt(id) },
       data: body,
     });

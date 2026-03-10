@@ -53,8 +53,8 @@ export function EnquiryForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: name.trim(),
-        email: email.trim() || undefined,
-        phone: phone.trim() || undefined,
+        email: email.trim() || "",       // ✅ fixed: was undefined
+        phone: phone.trim() || "",       // ✅ fixed: was undefined
         message: enquiryMessage,
       }),
     }).catch(() => null);

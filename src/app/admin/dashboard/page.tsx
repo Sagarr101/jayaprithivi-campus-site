@@ -1,185 +1,133 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from 'recharts';
-
-interface StatCardProps {
-  title: string;
-  value: number;
-  icon: string;
-}
-
-function StatCard({ title, value, icon }: StatCardProps) {
-  return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
-        </div>
-        <div className="text-2xl">{icon}</div>
-      </div>
-    </div>
-  );
-}
-
-interface Query {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  createdAt: string;
-}
-
-interface Admission {
-  id: number;
-  fullName: string;
-  course: string;
-  phone: string;
-  createdAt: string;
-}
-
-interface ChartData {
-  label: string;
-  count: number;
-}
+import Link from 'next/link';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    queries: 0,
-    admissions: 0,
-    staff: 0,
-    notices: 0,
-  });
-  const [recentQueries, setRecentQueries] = useState<Query[]>([]);
-  const [recentAdmissions, setRecentAdmissions] = useState<Admission[]>([]);
-  const [admissionsChart, setAdmissionsChart] = useState<ChartData[]>([]);
-  const [queriesChart, setQueriesChart] = useState<ChartData[]>([]);
+  const [stats, setStats] = useState({ queries: 0, admissions: 0, staff: 0, notices: 0 });
+  const [recentQueries, setRecentQueries] = useState<any[]>([]);
+  const [recentAdmissions, setRecentAdmissions] = useState<any[]>([]);
 
   useEffect(() => {
-    // Fetch stats
-    Promise.all([
-      fetch('/api/query').then(r => r.json()),
-      fetch('/api/admissions').then(r => r.json()),
-      fetch('/api/staff').then(r => r.json()),
-      fetch('/api/notices').then(r => r.json()),
-    ]).then(([queries, admissions, staff, notices]) => {
-      setStats({
-        queries: queries.length,
-        admissions: admissions.length,
-        staff: staff.length,
-        notices: notices.length,
-      });
-      setRecentQueries(queries.slice(0, 5));
-      setRecentAdmissions(admissions.slice(0, 5));
-      // Mock chart data - in real app, aggregate from data
-      setAdmissionsChart([
-        { label: 'Jan', count: 10 },
-        { label: 'Feb', count: 15 },
-        { label: 'Mar', count: 20 },
-      ]);
-      setQueriesChart([
-        { label: 'Week 1', count: 5 },
-        { label: 'Week 2', count: 8 },
-        { label: 'Week 3', count: 12 },
-      ]);
+    fetch('/api/query').then(r => r.json()).then(data => {
+      setStats(s => ({ ...s, queries: data.length }));
+      setRecentQueries(data.slice(0, 5));
     });
+    fetch('/api/admissions').then(r => r.json()).then(data => {
+      setStats(s => ({ ...s, admissions: data.length }));
+      setRecentAdmissions(data.slice(0, 5));
+    });
+    fetch('/api/staff').then(r => r.json()).then(data => setStats(s => ({ ...s, staff: data.length })));
+    fetch('/api/notices').then(r => r.json()).then(data => setStats(s => ({ ...s, notices: data.length })));
   }, []);
 
+  const statCards = [
+    { label: 'Total Queries', value: stats.queries, icon: '💬', color: 'bg-blue-50 text-blue-600', href: '/admin/queries' },
+    { label: 'Total Admissions', value: stats.admissions, icon: '🎓', color: 'bg-green-50 text-green-600', href: '/admin/admissions' },
+    { label: 'Total Staff', value: stats.staff, icon: '👥', color: 'bg-purple-50 text-purple-600', href: '/admin/staff' },
+    { label: 'Total Notices', value: stats.notices, icon: '📢', color: 'bg-orange-50 text-orange-600', href: '/admin/notices' },
+  ];
+
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm border-r border-gray-100 p-6">
-        <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
-        <nav className="space-y-2">
-          <a href="/admin/dashboard" className="block px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Dashboard</a>
-          <a href="/admin/queries" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Queries</a>
-          <a href="/admin/admissions" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Admissions</a>
-          <a href="/admin/notices" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Notices</a>
-          <a href="/admin/staff" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Staff</a>
-        </nav>
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500 mt-1">Welcome back! Here's what's happening.</p>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {statCards.map((card) => (
+          <Link href={card.href} key={card.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+            <div className={`w-12 h-12 rounded-xl ${card.color} flex items-center justify-center text-2xl mb-4`}>
+              {card.icon}
+            </div>
+            <div className="text-3xl font-extrabold text-gray-900 mb-1">{card.value}</div>
+            <div className="text-sm text-gray-500 font-medium">{card.label}</div>
+          </Link>
+        ))}
+      </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <StatCard title="Total Queries" value={stats.queries} icon="💬" />
-          <StatCard title="Total Admissions" value={stats.admissions} icon="📝" />
-          <StatCard title="Total Staff" value={stats.staff} icon="👥" />
-          <StatCard title="Total Notices" value={stats.notices} icon="📢" />
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Queries */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-gray-900">Recent Queries</h2>
+            <Link href="/admin/queries" className="text-sm text-indigo-600 font-semibold hover:underline">View all</Link>
+          </div>
+          {recentQueries.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <div className="text-3xl mb-2">💬</div>
+              <p>No queries yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentQueries.map((q: any) => (
+                <div key={q.id} className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-sm flex-shrink-0">
+                    {q.name?.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 text-sm">{q.name}</p>
+                    <p className="text-gray-500 text-xs truncate">{q.message}</p>
+                  </div>
+                  <span className="text-xs text-gray-400 flex-shrink-0">{new Date(q.createdAt).toLocaleDateString()}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold mb-4">Admissions per Month</h3>
-            <LineChart width={400} height={200} data={admissionsChart}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#4F46E5" />
-            </LineChart>
+        {/* Recent Admissions */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-gray-900">Recent Admissions</h2>
+            <Link href="/admin/admissions" className="text-sm text-indigo-600 font-semibold hover:underline">View all</Link>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold mb-4">Queries per Week</h3>
-            <BarChart width={400} height={200} data={queriesChart}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="label" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#06B6D4" />
-            </BarChart>
-          </div>
+          {recentAdmissions.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <div className="text-3xl mb-2">🎓</div>
+              <p>No admissions yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentAdmissions.map((a: any) => (
+                <div key={a.id} className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-green-100 text-green-700 font-bold flex items-center justify-center text-sm flex-shrink-0">
+                    {a.name?.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 text-sm">{a.name}</p>
+                    <p className="text-gray-500 text-xs">{a.program || 'No program'}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                    a.status === 'approved' ? 'bg-green-100 text-green-700' :
+                    a.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>{a.status}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Queries</h3>
-            <table className="w-full text-sm">
-              <thead>
-                <tr>
-                  <th className="text-left">Name</th>
-                  <th className="text-left">Email</th>
-                  <th className="text-left">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentQueries.map(q => (
-                  <tr key={q.id}>
-                    <td>{q.name}</td>
-                    <td>{q.email}</td>
-                    <td>{new Date(q.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold mb-4">Recent Admissions</h3>
-            <table className="w-full text-sm">
-              <thead>
-                <tr>
-                  <th className="text-left">Name</th>
-                  <th className="text-left">Course</th>
-                  <th className="text-left">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentAdmissions.map(a => (
-                  <tr key={a.id}>
-                    <td>{a.fullName}</td>
-                    <td>{a.course}</td>
-                    <td>{new Date(a.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Quick Links */}
+      <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { href: '/admin/notices', label: 'Add Notice', icon: '📢' },
+            { href: '/admin/staff', label: 'Add Staff', icon: '👥' },
+            { href: '/admin/events', label: 'Add Event', icon: '📅' },
+            { href: '/admin/gallery', label: 'Upload Photo', icon: '🖼️' },
+          ].map(item => (
+            <Link key={item.href} href={item.href} className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
+              <span className="text-2xl">{item.icon}</span>
+              <span className="font-semibold text-sm text-gray-700">{item.label}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </div>

@@ -11,121 +11,94 @@ interface GalleryItem {
   createdAt: string;
 }
 
+const inputCls = "w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white placeholder:text-gray-400 transition-all";
+
 export default function AdminGallery() {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [form, setForm] = useState({ title: '', description: '', category: 'general' });
   const [image, setImage] = useState<File | null>(null);
 
-  useEffect(() => {
-    fetchGallery();
-  }, []);
+  useEffect(() => { fetchGallery(); }, []);
 
-  const fetchGallery = () => {
-    fetch('/api/admin/gallery')
-      .then(r => r.json())
-      .then(setGallery);
-  };
+  const fetchGallery = () => fetch('/api/admin/gallery').then(r => r.json()).then(setGallery);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!image) return;
-
     const formData = new FormData();
     formData.append('title', form.title);
     formData.append('description', form.description);
     formData.append('category', form.category);
     formData.append('image', image);
-
-    await fetch('/api/admin/gallery', {
-      method: 'POST',
-      body: formData,
-    });
-
+    await fetch('/api/admin/gallery', { method: 'POST', body: formData });
     setForm({ title: '', description: '', category: 'general' });
     setImage(null);
     fetchGallery();
   };
 
   const handleDelete = async (id: number) => {
+    if (!confirm('Delete this image?')) return;
     await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
     fetchGallery();
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm border-r border-gray-100 p-6">
-        <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
-        <nav className="space-y-2">
-          <a href="/admin/dashboard" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Dashboard</a>
-          <a href="/admin/queries" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Queries</a>
-          <a href="/admin/admissions" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Admissions</a>
-          <a href="/admin/notices" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Notices</a>
-          <a href="/admin/staff" className="block px-3 py-2 rounded-lg hover:bg-gray-50">Staff</a>
-          <a href="/admin/gallery" className="block px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Gallery</a>
-        </nav>
-      </div>
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-5xl mx-auto py-10 px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900">Gallery Management</h1>
+          <p className="text-gray-500 mt-1">Upload and manage campus photos.</p>
+        </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold mb-6">Gallery</h1>
+        <div className="bg-white rounded-2xl shadow-md p-8 mb-8 border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">Upload New Image</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Title *</label>
+                <input type="text" placeholder="Image title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className={inputCls} required />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Category</label>
+                <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inputCls}>
+                  <option value="general">General</option>
+                  <option value="campus">Campus</option>
+                  <option value="events">Events</option>
+                  <option value="academics">Academics</option>
+                  <option value="sports">Sports</option>
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
+                <textarea placeholder="Optional description..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className={inputCls} rows={2} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Image File *</label>
+                <input type="file" accept="image/*" onChange={e => setImage(e.target.files?.[0] || null)} className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 file:font-semibold hover:file:bg-indigo-100" required />
+              </div>
+            </div>
+            <button type="submit" className="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors shadow-sm">
+              Upload Image
+            </button>
+          </form>
+        </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="Title"
-              value={form.title}
-              onChange={e => setForm({ ...form, title: e.target.value })}
-              className="border rounded p-2"
-              required
-            />
-            <select
-              value={form.category}
-              onChange={e => setForm({ ...form, category: e.target.value })}
-              className="border rounded p-2"
-            >
-              <option value="general">General</option>
-              <option value="campus">Campus</option>
-              <option value="events">Events</option>
-              <option value="academics">Academics</option>
-              <option value="sports">Sports</option>
-            </select>
-          </div>
-          <textarea
-            placeholder="Description (optional)"
-            value={form.description}
-            onChange={e => setForm({ ...form, description: e.target.value })}
-            className="border rounded p-2 w-full mb-4"
-            rows={3}
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={e => setImage(e.target.files?.[0] || null)}
-            className="border rounded p-2 mb-4"
-            required
-          />
-          <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-            Add Image
-          </button>
-        </form>
-
-        {/* Gallery Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {gallery.length === 0 && (
+            <div className="col-span-3 bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
+              <div className="text-4xl mb-3">🖼️</div>
+              <p className="text-gray-500 font-medium">No images yet. Upload one above!</p>
+            </div>
+          )}
           {gallery.map(item => (
-            <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-              <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover rounded mb-2" />
-              <h3 className="font-semibold">{item.title}</h3>
-              <p className="text-sm text-gray-600">{item.description}</p>
-              <p className="text-xs text-gray-500">{item.category}</p>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="mt-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
-              >
-                Delete
-              </button>
+            <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+              <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" />
+              <div className="p-4">
+                <h3 className="font-bold text-gray-900">{item.title}</h3>
+                <span className="inline-block mt-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full">{item.category}</span>
+                {item.description && <p className="text-sm text-gray-500 mt-2">{item.description}</p>}
+                <button onClick={() => handleDelete(item.id)} className="mt-3 px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors">Delete</button>
+              </div>
             </div>
           ))}
         </div>

@@ -1,219 +1,128 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+interface Course {
+  id: number;
+  name: string;
+  category: string;
+  duration: string;
+  department?: string;
+  description?: string;
+}
 
-type Course = {
-    id: number;
-    name: string;
-    category: string;
-    duration: string;
-    description: string | null;
-    department: string | null;
-};
+const inputCls = "w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white placeholder:text-gray-400 transition-all";
 
-export default function AdminCoursesPage() {
-    const [courses, setCourses] = React.useState<Course[]>([]);
-    const [loading, setLoading] = React.useState(true);
-    const [editingId, setEditingId] = React.useState<number | null>(null);
-    const [form, setForm] = React.useState({
-        name: "",
-        category: "Undergraduate",
-        duration: "",
-        description: "",
-        department: "",
-    });
-    const [submitting, setSubmitting] = React.useState(false);
-    const [message, setMessage] = React.useState("");
+export default function AdminCourses() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [form, setForm] = useState({ name: '', category: 'Undergraduate', duration: '', department: '', description: '' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-    async function fetchCourses() {
-        const res = await fetch("/api/admin/courses");
-        const data = await res.json();
-        setCourses(data.data?.courses || []);
-        setLoading(false);
+  useEffect(() => { fetchCourses(); }, []);
+
+  const fetchCourses = () => fetch('/api/courses').then(r => r.json()).then(setCourses);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingId) {
+      await fetch(`/api/courses/${editingId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      setEditingId(null);
+    } else {
+      await fetch('/api/courses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     }
+    setForm({ name: '', category: 'Undergraduate', duration: '', department: '', description: '' });
+    fetchCourses();
+  };
 
-    React.useEffect(() => {
-        fetchCourses();
-    }, []);
+  const handleEdit = (c: Course) => {
+    setForm({ name: c.name, category: c.category, duration: c.duration, department: c.department || '', description: c.description || '' });
+    setEditingId(c.id);
+  };
 
-    function startEdit(course: Course) {
-        setEditingId(course.id);
-        setForm({
-            name: course.name,
-            category: course.category,
-            duration: course.duration,
-            description: course.description ?? "",
-            department: course.department ?? "",
-        });
-        setMessage("");
-    }
+  const handleDelete = async (id: number) => {
+    if (!confirm('Delete this course?')) return;
+    await fetch(`/api/courses/${id}`, { method: 'DELETE' });
+    fetchCourses();
+  };
 
-    function cancelEdit() {
-        setEditingId(null);
-        setForm({ name: "", category: "Undergraduate", duration: "", description: "", department: "" });
-        setMessage("");
-    }
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setSubmitting(true);
-        setMessage("");
-
-        const method = editingId ? "PUT" : "POST";
-        const body = editingId ? { id: editingId, ...form } : form;
-
-        const res = await fetch("/api/admin/courses", {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-        });
-        const data = await res.json();
-        if (data.ok) {
-            setMessage(editingId ? "Course updated successfully!" : "Course added successfully!");
-            setForm({ name: "", category: "Undergraduate", duration: "", description: "", department: "" });
-            setEditingId(null);
-            await fetchCourses();
-        } else {
-            setMessage(data.error ?? "Something went wrong.");
-        }
-        setSubmitting(false);
-    }
-
-    async function handleDelete(id: number) {
-        if (!confirm("Delete this course?")) return;
-        await fetch(`/api/admin/courses?id=${id}`, { method: "DELETE" });
-        await fetchCourses();
-    }
-
-    return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold">Manage Courses</h1>
-
-            {/* Add/Edit Course Form */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>{editingId ? "Edit Course" : "Add New Course"}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Course Name *</label>
-                            <input
-                                required
-                                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                                value={form.name}
-                                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                                placeholder="e.g., BBA (Bachelor of Business Administration)"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Category *</label>
-                            <select
-                                required
-                                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                                value={form.category}
-                                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                            >
-                                <option value="Undergraduate">Undergraduate</option>
-                                <option value="Postgraduate">Postgraduate</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Duration *</label>
-                            <input
-                                required
-                                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                                value={form.duration}
-                                onChange={(e) => setForm((f) => ({ ...f, duration: e.target.value }))}
-                                placeholder="e.g., 4 Years"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Department</label>
-                            <input
-                                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)]"
-                                value={form.department}
-                                onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
-                                placeholder="e.g., Management"
-                            />
-                        </div>
-                        <div className="sm:col-span-2">
-                            <label className="block text-sm font-medium mb-1">Description</label>
-                            <textarea
-                                className="w-full rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[color:var(--accent)] min-h-[80px]"
-                                value={form.description}
-                                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                                placeholder="Brief description of the program..."
-                            />
-                        </div>
-                        <div className="sm:col-span-2 flex items-center gap-2 flex-wrap">
-                            <Button type="submit" disabled={submitting}>
-                                {submitting ? (editingId ? "Updating..." : "Adding...") : editingId ? "Update Course" : "Add Course"}
-                            </Button>
-                            {editingId && (
-                                <Button type="button" onClick={cancelEdit} style={{ background: "transparent", color: "var(--text)" }}>
-                                    Cancel
-                                </Button>
-                            )}
-                            {message && (
-                                <span className={`text-sm ${message.includes("success") ? "text-green-600" : "text-red-500"}`}>
-                                    {message}
-                                </span>
-                            )}
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
-
-            {/* Courses List */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>All Courses ({courses.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {loading ? (
-                        <div className="text-sm text-black/60 dark:text-white/60">Loading...</div>
-                    ) : courses.length === 0 ? (
-                        <div className="text-sm text-black/60 dark:text-white/60">No courses added yet.</div>
-                    ) : (
-                        <div className="grid gap-3">
-                            {courses.map((c) => (
-                                <div
-                                    key={c.id}
-                                    className="flex items-start justify-between gap-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4"
-                                >
-                                    <div className="flex-1">
-                                        <div className="font-semibold text-sm">{c.name}</div>
-                                        <div className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                                            {c.category} · {c.duration}{c.department ? ` · ${c.department}` : ""}
-                                        </div>
-                                        {c.description && (
-                                            <div className="text-xs text-black/50 dark:text-white/50 mt-1">{c.description}</div>
-                                        )}
-                                    </div>
-                                    <div className="flex gap-2 shrink-0">
-                                        <button
-                                            onClick={() => startEdit(c)}
-                                            className="text-xs text-blue-500 hover:underline"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(c.id)}
-                                            className="text-xs text-red-500 hover:underline"
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-5xl mx-auto py-10 px-4">
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900">Courses Management</h1>
+          <p className="text-gray-500 mt-1">Add and manage academic programs offered by the campus.</p>
         </div>
-    );
+
+        {/* Form */}
+        <div className="bg-white rounded-2xl shadow-md p-8 mb-8 border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">{editingId ? 'Edit Course' : 'Add New Course'}</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Course Name *</label>
+                <input type="text" placeholder="e.g. BBA (Bachelor of Business Administration)" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className={inputCls} required />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Category *</label>
+                <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className={inputCls}>
+                  <option value="Undergraduate">Undergraduate</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Certificate">Certificate</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Duration *</label>
+                <input type="text" placeholder="e.g. 4 Years" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} className={inputCls} required />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Department</label>
+                <input type="text" placeholder="e.g. Management" value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} className={inputCls} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
+                <textarea placeholder="Brief description of the program..." value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className={inputCls} rows={3} />
+              </div>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="submit" className="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors shadow-sm">
+                {editingId ? '✓ Update Course' : '+ Add Course'}
+              </button>
+              {editingId && (
+                <button type="button" onClick={() => { setEditingId(null); setForm({ name: '', category: 'Undergraduate', duration: '', department: '', description: '' }); }} className="px-6 py-2.5 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors">
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {courses.length === 0 && (
+            <div className="col-span-2 bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
+              <div className="text-4xl mb-3">📚</div>
+              <p className="text-gray-500 font-medium">No courses yet. Add one above!</p>
+            </div>
+          )}
+          {courses.map(c => (
+            <div key={c.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1">
+                  <span className="inline-block px-2.5 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full mb-2">{c.category}</span>
+                  <h3 className="font-bold text-gray-900 text-lg leading-tight">{c.name}</h3>
+                  <p className="text-sm text-gray-500 mt-1">⏱ {c.duration} {c.department && `· ${c.department}`}</p>
+                  {c.description && <p className="text-sm text-gray-600 mt-2">{c.description}</p>}
+                </div>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <button onClick={() => handleEdit(c)} className="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors">Edit</button>
+                <button onClick={() => handleDelete(c.id)} className="px-4 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
