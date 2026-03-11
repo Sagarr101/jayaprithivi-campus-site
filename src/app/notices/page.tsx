@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import { Badge } from "@/components/ui/Badge";
 import { site } from "@/content/site";
 import { formatDate } from "@/lib/date";
@@ -39,9 +38,7 @@ export default async function NoticesPage() {
           <div className="text-center py-20">
             <div className="text-5xl mb-4">📋</div>
             <h3 className="text-2xl font-extrabold mb-2">More notices coming soon</h3>
-            <p className="text-gray-700 font-bold">
-              Check back soon for the latest updates.
-            </p>
+            <p className="text-gray-700 font-bold">Check back soon for the latest updates.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -51,11 +48,11 @@ export default async function NoticesPage() {
                 className="card shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white rounded-xl p-8 flex flex-col"
               >
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  {n.category ? (
+                  {n.category && (
                     <Badge className="bg-indigo-900/10 text-indigo-900 border-none">
                       {n.category}
                     </Badge>
-                  ) : null}
+                  )}
                   <span className="text-xs font-bold text-gray-500">
                     {formatDate(n.createdAt.toISOString().slice(0, 10))}
                   </span>
@@ -63,7 +60,7 @@ export default async function NoticesPage() {
                 <div className="card-title mb-2 text-base font-bold text-indigo-900">
                   {n.title}
                 </div>
-                <div className="card-desc card-secondary mb-4 text-sm text-gray-700 leading-7">
+                <div className="card-desc card-secondary mb-4 text-sm text-gray-700 leading-7 line-clamp-4">
                   {n.content}
                 </div>
                 <a

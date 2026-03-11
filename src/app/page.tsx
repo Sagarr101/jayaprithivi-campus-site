@@ -20,10 +20,10 @@ export default async function HomePage() {
   let courses: any[] = [];
 
   try {
-    const allNotices = await prisma.notice.findMany();
-    latestNotices = allNotices
-      .sort((a: any, b: any) => b.dateISO.localeCompare(a.dateISO))
-      .slice(0, 3);
+    latestNotices = await prisma.notice.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+    });
 
     staffCount = await prisma.staff.count();
     featuredStaff = await prisma.staff.findMany({ take: 4 });
@@ -287,10 +287,14 @@ export default async function HomePage() {
                     {n.category && (
                       <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: "#f0fdfa", color: "#0d9488" }}>{n.category}</span>
                     )}
-                    <span className="text-xs font-bold text-gray-400">{formatDate(n.dateISO)}</span>
+                    <span className="text-xs font-bold text-gray-400">
+                      {formatDate(n.createdAt.toISOString().slice(0, 10))}
+                    </span>
                   </div>
                   <div className="text-base font-bold mb-2" style={{ color: "#0f172a" }}>{n.title}</div>
-                  {n.summary && <div className="text-sm text-gray-500 mb-4 flex-1">{n.summary}</div>}
+                  {n.content && (
+                    <div className="text-sm text-gray-500 mb-4 flex-1 line-clamp-3">{n.content}</div>
+                  )}
                   <Link href="/notices" className="mt-auto inline-block px-4 py-2 rounded-full text-white text-sm font-bold text-center hover:opacity-90 transition-opacity" style={{ background: "#f97316" }}>
                     Read More →
                   </Link>
